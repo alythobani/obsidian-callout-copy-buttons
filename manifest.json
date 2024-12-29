@@ -1,0 +1,11 @@
+{
+  "id": "callout-copy-button",
+  "name": "Callout Copy Button",
+  "version": "1.0.0",
+  "minAppVersion": "1.7.7",
+  "description": "Adds a copy button to callout blocks in your notes.",
+  "author": "Aly Thobani",
+  "authorUrl": "https://github.com/alythobani/",
+  "fundingUrl": "https://buymeacoffee.com/alythobani",
+  "isDesktopOnly": false
+}
