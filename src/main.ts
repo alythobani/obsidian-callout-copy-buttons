@@ -68,7 +68,7 @@ export default class CalloutCopyButtonPlugin extends Plugin {
     /** Parent div of the callout in the CodeMirror editor */
     codeMirrorCalloutNode: Element;
   }): void {
-    const calloutTitleDiv = calloutNode.querySelector("div.callout-title");
+    const calloutTitleDiv = calloutNode.querySelector(".callout-title");
     if (calloutTitleDiv === null) {
       console.warn("Callout title div not found; not adding copy button", calloutNode);
       return;
@@ -94,7 +94,7 @@ export default class CalloutCopyButtonPlugin extends Plugin {
     editBlockButton,
   }: {
     calloutTitleDiv: Element;
-    copyButton: HTMLSpanElement;
+    copyButton: HTMLDivElement;
     editBlockButton: Element;
   }): void {
     const calloutActionButtonsWrapper = document.createElement("div");
@@ -161,8 +161,8 @@ function createCopyButton({
 }: {
   calloutNode: HTMLElement;
   classNames?: string[];
-}): HTMLSpanElement {
-  const copyButton = document.createElement("span");
+}): HTMLDivElement {
+  const copyButton = document.createElement("div");
   copyButton.addClasses(["callout-copy-button", ...classNames]);
   copyButton.setAttribute("aria-label", "Copy");
 
@@ -179,7 +179,7 @@ function onCopyButtonClick({
 }: {
   e: MouseEvent;
   calloutNode: HTMLElement;
-  copyButton: HTMLSpanElement;
+  copyButton: HTMLDivElement;
 }): void {
   e.stopPropagation();
   const contentDiv = calloutNode.querySelector(".callout-content");
