@@ -23,7 +23,10 @@ export default class CalloutCopyButtonPlugin extends Plugin {
     return new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         mutation.addedNodes.forEach((node) => {
-          if (node instanceof HTMLDivElement && node.matches(".cm-callout")) {
+          if (!(node instanceof HTMLElement)) {
+            return;
+          }
+          if (node.matches(".callout") || node.matches(".cm-callout")) {
             this.addCopyButtonToCallout(node);
           }
         });
