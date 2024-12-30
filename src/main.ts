@@ -113,11 +113,32 @@ export default class CalloutCopyButtonPlugin extends Plugin {
   }
 
   private removeCalloutCopyButtons(): void {
+    document.querySelectorAll(".callout-action-buttons").forEach((wrapper) => {
+      const editBlockButton = wrapper.querySelector(".edit-block-button");
+      this.moveEditBlockButtonOutOfWrapper(editBlockButton);
+      console.log("Removing action buttons wrapper", wrapper);
+      wrapper.remove();
+    });
     document.querySelectorAll(".callout-copy-button").forEach((button) => {
       console.log("Removed copy button", button);
       button.remove();
     });
   }
+
+  private moveEditBlockButtonOutOfWrapper(editBlockButton: Element | null): void {
+    if (editBlockButton === null) {
+      return;
+    }
+    const cmCalloutParent = getCodeMirrorCalloutParent(editBlockButton);
+    if (cmCalloutParent === null) {
+      return;
+    }
+    cmCalloutParent.appendChild(editBlockButton);
+  }
+}
+
+function getCodeMirrorCalloutParent(node: Element): Element | null {
+  return node.closest(".cm-callout");
 }
 
 function createCopyButton({
