@@ -1,6 +1,8 @@
 import { Plugin } from "obsidian";
 
 export default class CalloutCopyButtonPlugin extends Plugin {
+  calloutDivObserver: MutationObserver | null = null;
+
   private logInfo(message: string): void {
     console.log(`${this.manifest.name}: ${message}`);
   }
@@ -14,13 +16,14 @@ export default class CalloutCopyButtonPlugin extends Plugin {
   private watchForNewCallouts(): void {
     const observer = this.getCalloutDivObserver();
     observer.observe(document.body, { childList: true, subtree: true });
+    this.calloutDivObserver = observer;
   }
 
   private getCalloutDivObserver(): MutationObserver {
     return new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         mutation.addedNodes.forEach((node) => {
-          if (node instanceof HTMLDivElement && node.matches(".callout")) {
+          if (node instanceof HTMLDivElement && node.matches(".cm-callout")) {
             this.addCopyButtonToCallout(node);
           }
         });
@@ -110,6 +113,7 @@ export default class CalloutCopyButtonPlugin extends Plugin {
   onunload(): void {
     this.logInfo("Unloading Callout Copy Button plugin");
     this.removeCalloutCopyButtons();
+    this.disconnectCalloutDivObserver();
   }
 
   private removeCalloutCopyButtons(): void {
@@ -134,6 +138,13 @@ export default class CalloutCopyButtonPlugin extends Plugin {
       return;
     }
     cmCalloutParent.appendChild(editBlockButton);
+  }
+
+  private disconnectCalloutDivObserver(): void {
+    if (this.calloutDivObserver !== null) {
+      this.calloutDivObserver.disconnect();
+      this.calloutDivObserver = null;
+    }
   }
 }
 
