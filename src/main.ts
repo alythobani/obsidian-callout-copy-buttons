@@ -7,43 +7,104 @@ export default class CalloutCopyButtonPlugin extends Plugin {
 
   onload(): void {
     this.logInfo("Loading Callout Copy Button plugin");
-    // this.registerEditorExtension(calloutCopyButtonViewPlugin);
-    //  registerCalloutCopyButtonDomExtension(this.app, this);
-    // Add the copy button when the plugin is loaded
-    this.registerCalloutCopyButtonObserver();
+    this.watchForNewCallouts();
+    this.addAllCopyButtons();
   }
 
-  private registerCalloutCopyButtonObserver(): void {
-    // Listen for DOM mutations to dynamically add buttons to callouts
-    const observer = new MutationObserver((mutations) => {
+  private watchForNewCallouts(): void {
+    const observer = this.getCalloutDivObserver();
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
+
+  private getCalloutDivObserver(): MutationObserver {
+    return new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         mutation.addedNodes.forEach((node) => {
-          if (node instanceof HTMLElement && node.matches(".callout")) {
-            this.addButtonToCallout(node);
+          if (node instanceof HTMLDivElement && node.matches(".callout")) {
+            this.addCopyButtonToCallout(node);
           }
         });
       });
     });
+  }
 
-    // Start observing the document body
-    observer.observe(document.body, { childList: true, subtree: true });
-
-    // Add buttons to existing callouts
+  private addAllCopyButtons(): void {
     document.querySelectorAll(".callout").forEach((callout) => {
       if (callout instanceof HTMLElement) {
-        this.addButtonToCallout(callout);
+        this.addCopyButtonToCallout(callout);
       }
     });
   }
 
-  private addButtonToCallout(calloutNode: HTMLElement): void {
-    if (calloutNode.querySelector(".copy-button")) return;
+  private addCopyButtonToCallout(calloutNode: HTMLElement): void {
+    console.log("Adding button to callout", calloutNode);
 
-    const copyButton = createCopyButton(calloutNode);
+    if (calloutNode.querySelector(".callout-copy-button")) {
+      // Copy button already exists
+      return;
+    }
 
-    // Append the button to the callout
-    const calloutTitleChild = calloutNode.querySelector(".callout-title");
-    calloutTitleChild?.appendChild(copyButton);
+    const codeMirrorCalloutNode = calloutNode.closest(".cm-callout");
+
+    const isLivePreview = codeMirrorCalloutNode !== null;
+    if (isLivePreview) {
+      this.addCopyButtonToLivePreviewCallout({ calloutNode, codeMirrorCalloutNode });
+      return;
+    }
+    this.addCopyButtonToReadingModeCallout(calloutNode);
+  }
+
+  private addCopyButtonToLivePreviewCallout({
+    calloutNode,
+    codeMirrorCalloutNode,
+  }: {
+    calloutNode: HTMLElement;
+    /** Parent div of the callout in the CodeMirror editor */
+    codeMirrorCalloutNode: Element;
+  }): void {
+    const calloutTitleDiv = calloutNode.querySelector("div.callout-title");
+    if (calloutTitleDiv === null) {
+      console.warn("Callout title div not found; not adding copy button", calloutNode);
+      return;
+    }
+    const copyButton = createCopyButton({
+      calloutNode,
+      classNames: ["callout-copy-button-live-preview"],
+    });
+    const editBlockButton = codeMirrorCalloutNode.querySelector(".edit-block-button");
+
+    if (editBlockButton === null) {
+      // TODO: Add copy button even if edit block button is not found
+      console.warn("Edit block button not found; not adding copy button", calloutNode);
+      return;
+    }
+
+    this.addCopyButtonBesideEditBlockButton({ calloutTitleDiv, copyButton, editBlockButton });
+  }
+
+  private addCopyButtonBesideEditBlockButton({
+    calloutTitleDiv,
+    copyButton,
+    editBlockButton,
+  }: {
+    calloutTitleDiv: Element;
+    copyButton: HTMLSpanElement;
+    editBlockButton: Element;
+  }): void {
+    const calloutActionButtonsWrapper = document.createElement("div");
+    calloutActionButtonsWrapper.classList.add("callout-action-buttons");
+    calloutActionButtonsWrapper.appendChild(editBlockButton);
+    calloutActionButtonsWrapper.appendChild(copyButton);
+    calloutTitleDiv.appendChild(calloutActionButtonsWrapper);
+  }
+
+  private addCopyButtonToReadingModeCallout(calloutNode: HTMLElement): void {
+    const copyButton = createCopyButton({
+      calloutNode,
+      classNames: ["callout-copy-button-reading-mode"],
+    });
+    calloutNode.style.position = "relative";
+    calloutNode.appendChild(copyButton);
   }
 
   onunload(): void {
@@ -52,18 +113,26 @@ export default class CalloutCopyButtonPlugin extends Plugin {
   }
 
   private removeCalloutCopyButtons(): void {
-    document.querySelectorAll(".copy-button").forEach((button) => {
+    document.querySelectorAll(".callout-copy-button").forEach((button) => {
+      console.log("Removed copy button", button);
       button.remove();
     });
   }
 }
 
-function createCopyButton(calloutNode: HTMLElement): HTMLButtonElement {
-  const copyButton = document.createElement("button");
-  copyButton.textContent = "Copy";
-  copyButton.classList.add("copy-button");
-  copyButton.setAttribute("title", "Copy to clipboard");
-  copyButton.setAttribute("aria-label", "Copy to clipboard");
+function createCopyButton({
+  calloutNode,
+  classNames = [],
+}: {
+  calloutNode: HTMLElement;
+  classNames?: string[];
+}): HTMLSpanElement {
+  const copyButton = document.createElement("span");
+  copyButton.addClasses(["callout-copy-button", ...classNames]);
+  copyButton.setAttribute("aria-label", "Copy");
+
+  copyButton.innerHTML = copyButtonSVGText;
+
   copyButton.addEventListener("click", (e) => onCopyButtonClick({ e, calloutNode, copyButton }));
   return copyButton;
 }
@@ -75,19 +144,34 @@ function onCopyButtonClick({
 }: {
   e: MouseEvent;
   calloutNode: HTMLElement;
-  copyButton: HTMLButtonElement;
+  copyButton: HTMLSpanElement;
 }): void {
-  const content = calloutNode.querySelector(".callout-content");
-  if (content) {
-    navigator.clipboard
-      .writeText(content.textContent ?? "")
-      .then(() => {
-        copyButton.textContent = "Copied!";
-        setTimeout(() => (copyButton.textContent = "Copy"), 2000);
-      })
-      .catch((error: unknown) => {
-        console.error(error);
-      });
-  }
   e.stopPropagation();
+  const contentDiv = calloutNode.querySelector(".callout-content");
+  if (contentDiv === null) {
+    console.error("Callout content div not found; cannot copy", calloutNode);
+    return;
+  }
+  const trimmedContent = contentDiv.textContent?.trim();
+  navigator.clipboard
+    .writeText(trimmedContent ?? "")
+    .then(() => {
+      console.log(`Copied: ${JSON.stringify(trimmedContent)}`);
+      copyButton.innerHTML = "✔"; // Temporary feedback
+      copyButton.addClass("just-copied");
+      copyButton.setAttribute("disabled", "true");
+      setTimeout(() => {
+        copyButton.innerHTML = copyButtonSVGText;
+        copyButton.removeClass("just-copied");
+        copyButton.removeAttribute("disabled");
+      }, 3000);
+    })
+    .catch((error: unknown) => {
+      console.error(error);
+    });
 }
+
+const copyButtonSVGText = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon lucide-copy">
+<rect x="8" y="8" width="14" height="14" rx="2" ry="2"></rect>
+<path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+</svg>`;
