@@ -1,5 +1,5 @@
 import { WidgetType } from "@codemirror/view";
-import { copyButtonSVGText } from "./copyButton";
+import { copyButtonCheckmarkIconSVGText, copyButtonSVGText } from "./copyButton";
 
 export class CopyButtonWidget extends WidgetType {
   constructor(private text: string) {
@@ -15,11 +15,12 @@ export class CopyButtonWidget extends WidgetType {
 
     copyButton.addEventListener("click", (e) => {
       e.stopPropagation();
+      if (copyButton.hasAttribute("disabled")) return;
       navigator.clipboard
         .writeText(this.text)
         .then(() => {
           console.log(`Copied: ${JSON.stringify(this.text)}`);
-          copyButton.innerHTML = "✔"; // Temporary feedback
+          copyButton.innerHTML = copyButtonCheckmarkIconSVGText;
           copyButton.addClass("just-copied");
           copyButton.setAttribute("disabled", "true");
           setTimeout(() => {

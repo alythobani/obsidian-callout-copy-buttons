@@ -3,44 +3,47 @@ export const copyButtonSVGText = `<svg xmlns="http://www.w3.org/2000/svg" width=
 <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
 </svg>`;
 
+export const copyButtonCheckmarkIconSVGText = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon lucide-check">
+<path d="M20 6 9 17l-5-5">
+</path>
+</svg>`;
+
 export function createCopyButton({
-  calloutNode,
-  classNames = [],
+  getCalloutBodyText,
+  className,
 }: {
-  calloutNode: HTMLElement;
-  classNames?: string[];
+  getCalloutBodyText: () => string;
+  className?: string;
 }): HTMLDivElement {
   const copyButton = document.createElement("div");
-  copyButton.addClasses(["callout-copy-button", ...classNames]);
+  copyButton.addClass("callout-copy-button");
+  if (className !== undefined) copyButton.addClass(className);
   copyButton.setAttribute("aria-label", "Copy");
-
   copyButton.innerHTML = copyButtonSVGText;
-
-  copyButton.addEventListener("click", (e) => onCopyButtonClick({ e, calloutNode, copyButton }));
+  copyButton.addEventListener("click", (e) => {
+    if (copyButton.hasAttribute("disabled")) return;
+    onCopyButtonClick({ e, getCalloutBodyText, copyButton });
+  });
   return copyButton;
 }
 
 function onCopyButtonClick({
   e,
-  calloutNode,
+  getCalloutBodyText,
   copyButton,
 }: {
   e: MouseEvent;
-  calloutNode: HTMLElement;
+  getCalloutBodyText: () => string;
   copyButton: HTMLDivElement;
 }): void {
   e.stopPropagation();
-  const contentDiv = calloutNode.querySelector(".callout-content");
-  if (contentDiv === null) {
-    console.error("Callout content div not found; cannot copy", calloutNode);
-    return;
-  }
-  const trimmedContent = contentDiv.textContent?.trim();
+  if (copyButton.hasAttribute("disabled")) return;
+  const calloutBodyText = getCalloutBodyText();
   navigator.clipboard
-    .writeText(trimmedContent ?? "")
+    .writeText(calloutBodyText)
     .then(() => {
-      console.log(`Copied: ${JSON.stringify(trimmedContent)}`);
-      copyButton.innerHTML = "✔"; // Temporary feedback
+      console.log(`Copied: ${JSON.stringify(calloutBodyText)}`);
+      copyButton.innerHTML = copyButtonCheckmarkIconSVGText;
       copyButton.addClass("just-copied");
       copyButton.setAttribute("disabled", "true");
       setTimeout(() => {

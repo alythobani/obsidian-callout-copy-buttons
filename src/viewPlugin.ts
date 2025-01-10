@@ -9,6 +9,9 @@ import {
   type ViewUpdate,
 } from "@codemirror/view";
 import { CopyButtonWidget } from "./copyButtonWidget";
+import { getCalloutBodyLines } from "./utils/getCalloutBodyText";
+
+const CALLOUT_HEADER_WITH_INDENT_CAPTURE_REGEX = /^((?:> )+)\[!.+\]/;
 
 class CalloutCopyButtonViewPlugin implements PluginValue {
   decorations: DecorationSet;
@@ -31,32 +34,21 @@ class CalloutCopyButtonViewPlugin implements PluginValue {
     const builder = new RangeSetBuilder<Decoration>();
     const doc = view.state.doc;
 
-    for (let line = 0; line < doc.lines; line++) {
-      const text = doc.line(line + 1).text;
-
-      if (text.startsWith("> [!")) {
-        // Identify callout lines
-        const from = doc.line(line + 1).from;
-        // const to = doc.line(line + 1).to;
-
-        // Create a decoration with metadata
-        // console.log(`Adding copy button to line ${line + 1} from ${from} to ${to}`);
-        const deco = Decoration.widget({
-          widget: new CopyButtonWidget(text),
-          side: 1, // Place the widget on the right
-          attributes: {
-            "data-callout-line": `${line + 1}`,
-          },
-        });
-        // const deco = Decoration.mark({
-        //   class: "cm-callout-decoration-mark",
-        //   attributes: {
-        //     "data-callout-line": `${line + 1}`,
-        //   },
-        // });
-        // builder.add(from, to, deco);
-        builder.add(from, from, deco);
+    for (let line = 1; line <= doc.lines; line++) {
+      const lineText = doc.line(line).text;
+      const calloutIndent = CALLOUT_HEADER_WITH_INDENT_CAPTURE_REGEX.exec(lineText)?.[1];
+      if (calloutIndent === undefined) {
+        // Not the start of a callout block
+        continue;
       }
+      const calloutBodyLines = getCalloutBodyLines({ doc, calloutIndent, bodyStartLine: line + 1 });
+      const calloutBodyText = calloutBodyLines.join("\n");
+      const deco = Decoration.widget({
+        widget: new CopyButtonWidget(calloutBodyText),
+        side: 1, // Place the widget on the right
+      });
+      const from = doc.line(line).from;
+      builder.add(from, from, deco);
     }
 
     return builder.finish();

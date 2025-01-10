@@ -2,7 +2,6 @@
   position: absolute;
   top: var(--size-2-2);
   right: 32px;
-  /* inset-inline-end: var(--size-2-2); */
   display: flex;
   padding: var(--size-2-2) var(--size-2-3);
   background: none !important;
@@ -12,7 +11,7 @@
   font-family: var(--font-interface);
   font-size: var(--font-ui-smaller);
   cursor: var(--cursor);
-  color: var(--text-muted) !important;
+  color: var(--text-muted);
   fill: var(--text-muted);
   stroke: var(--text-muted);
   opacity: 0;
@@ -20,36 +19,31 @@
     width: var(--icon-size);
     height: var(--icon-size);
   }
+
+  &.just-copied {
+    color: var(--text-success);
+  }
 }
 
 .cm-callout:hover,
 .callout:hover {
   .callout-copy-button {
-    /* .markdown-source-view.mod-cm6 .cm-embed-block:not(.cm-table-widget):hover .callout-copy-button { */
     opacity: 1;
   }
 }
 
 .callout-copy-button:hover {
-  /* color: var(--interactive-accent) !important; */
   background-color: var(--background-modifier-hover) !important;
 }
 
 .cm-callout .callout-copy-button {
-  /* position: static; */
   margin-left: auto;
 }
 
 .callout-action-buttons {
-  /* display: flex; */
-  /* gap: 8px; */
   position: absolute;
-  /* top: 8px;
-  right: 8px; */
   top: 0px;
   right: 0px;
-  /* top: 6px;
-  right: 6px; */
 }
 
 .callout-copy-button-reading-mode {
@@ -60,10 +54,8 @@
 
 .callout-copy-button-widget {
   position: absolute;
-  top: var(--size-2-2);
-  right: 32px;
-  z-index: 1000000000000;
-  display: flex;
+  top: 0px;
+  right: 0px;
   padding: var(--size-2-2) var(--size-2-3);
   background: none !important;
   border: none;
@@ -82,6 +74,5 @@
 }
 
 .callout-copy-button-widget:hover {
-  /* color: var(--interactive-accent) !important; */
   background-color: var(--background-modifier-hover) !important;
 }

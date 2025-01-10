@@ -1,5 +1,5 @@
 {
-  "cSpell.words": ["Callout", "callouts", "tldr", "unfoldable"],
+  "cSpell.words": ["Callout", "callouts", "Checkmark", "tldr", "unfoldable"],
   "[javascript][typescript][typescriptreact][json][jsonc][css][scss][postcss]": {
     // Prettier
     "editor.defaultFormatter": "esbenp.prettier-vscode",
