@@ -10,15 +10,17 @@ export const copyButtonCheckmarkIconSVGText = `<svg xmlns="http://www.w3.org/200
 
 export function createCopyButton({
   getCalloutBodyText,
+  tooltipText,
   className,
 }: {
   getCalloutBodyText: () => string;
+  tooltipText: string;
   className?: string;
 }): HTMLDivElement {
   const copyButton = document.createElement("div");
   copyButton.addClass("callout-copy-button");
   if (className !== undefined) copyButton.addClass(className);
-  copyButton.setAttribute("aria-label", "Copy");
+  copyButton.setAttribute("aria-label", tooltipText);
   copyButton.innerHTML = copyButtonSVGText;
   copyButton.addEventListener("click", (e) => {
     if (copyButton.hasAttribute("disabled")) return;

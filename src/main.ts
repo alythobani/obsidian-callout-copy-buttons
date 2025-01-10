@@ -49,6 +49,7 @@ export default class CalloutCopyButtonPlugin extends Plugin {
             this.addCopyButtonToCallout({
               calloutNode,
               getCalloutBodyText: () => getCalloutBodyTextFromInnerText(calloutNode),
+              tooltipText: "Copy (plain text)",
             })
           );
         });
@@ -62,6 +63,7 @@ export default class CalloutCopyButtonPlugin extends Plugin {
         this.addCopyButtonToCallout({
           calloutNode,
           getCalloutBodyText: () => getCalloutBodyTextFromInnerText(calloutNode),
+          tooltipText: "Copy (plain text)",
         });
       }
     });
@@ -70,9 +72,11 @@ export default class CalloutCopyButtonPlugin extends Plugin {
   private addCopyButtonToCallout({
     calloutNode,
     getCalloutBodyText,
+    tooltipText,
   }: {
     calloutNode: HTMLElement;
     getCalloutBodyText: () => string;
+    tooltipText: string;
   }): void {
     console.log("Adding copy button to callout", calloutNode);
     if (calloutNode.querySelector(".callout-copy-button")) {
@@ -90,20 +94,23 @@ export default class CalloutCopyButtonPlugin extends Plugin {
         calloutNode,
         getCalloutBodyText,
         codeMirrorCalloutNode,
+        tooltipText,
       });
       return;
     }
     console.log("Adding copy button to reading mode callout", calloutNode);
-    this.addCopyButtonToReadingModeCallout({ calloutNode, getCalloutBodyText });
+    this.addCopyButtonToReadingModeCallout({ calloutNode, getCalloutBodyText, tooltipText });
   }
 
   private addCopyButtonToLivePreviewCallout({
     calloutNode,
     getCalloutBodyText,
+    tooltipText,
     codeMirrorCalloutNode,
   }: {
     calloutNode: HTMLElement;
     getCalloutBodyText: () => string;
+    tooltipText: string;
     /** Parent div of the callout in the CodeMirror editor */
     codeMirrorCalloutNode: Element;
   }): void {
@@ -115,6 +122,7 @@ export default class CalloutCopyButtonPlugin extends Plugin {
     const copyButton = createCopyButton({
       getCalloutBodyText,
       className: "callout-copy-button-live-preview",
+      tooltipText,
     });
     const editBlockButton = codeMirrorCalloutNode.querySelector(".edit-block-button");
 
@@ -146,13 +154,16 @@ export default class CalloutCopyButtonPlugin extends Plugin {
   private addCopyButtonToReadingModeCallout({
     calloutNode,
     getCalloutBodyText,
+    tooltipText,
   }: {
     calloutNode: HTMLElement;
     getCalloutBodyText: () => string;
+    tooltipText: string;
   }): void {
     const copyButton = createCopyButton({
       getCalloutBodyText,
       className: "callout-copy-button-reading-mode",
+      tooltipText,
     });
     calloutNode.style.position = "relative";
     calloutNode.appendChild(copyButton);
@@ -180,6 +191,7 @@ export default class CalloutCopyButtonPlugin extends Plugin {
 
           return calloutBodyText;
         },
+        tooltipText: "Copy (Markdown)",
       });
     });
   }
