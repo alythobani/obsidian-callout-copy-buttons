@@ -1,9 +1,7 @@
-import { type MarkdownPostProcessorContext, Plugin } from "obsidian";
-import { createCopyButton } from "./copyButton";
-import {
-  getCalloutBodyTextFromInnerText,
-  getCalloutBodyTextFromSectionInfo,
-} from "./utils/getCalloutBodyText";
+import { Plugin } from "obsidian";
+import { postProcessMarkdown } from "./markdownPostProcessor";
+import { addCopyButtonToCallout } from "./utils/addCopyButtonToCallout";
+import { getCalloutBodyTextFromInnerText } from "./utils/getCalloutBodyText";
 import { calloutCopyButtonViewPlugin } from "./viewPlugin";
 
 export default class CalloutCopyButtonPlugin extends Plugin {
@@ -20,7 +18,9 @@ export default class CalloutCopyButtonPlugin extends Plugin {
 
     this.watchAndAddCopyButtonsToDOM();
 
-    this.registerMarkdownPostProcessor(this.postProcessMarkdown.bind(this));
+    // The Markdown post processor is able to access the original markdown text easier than the
+    // mutation observer
+    this.registerMarkdownPostProcessor(postProcessMarkdown);
   }
 
   private watchAndAddCopyButtonsToDOM(): void {
@@ -43,10 +43,8 @@ export default class CalloutCopyButtonPlugin extends Plugin {
           }
           const newCMCalloutNodes = node.querySelectorAll<HTMLDivElement>(".cm-callout");
           const newCalloutNodes = node.querySelectorAll<HTMLDivElement>(".callout");
-          console.log("New CM callout nodes", newCMCalloutNodes);
-          console.log("New callout nodes", newCalloutNodes);
           [...newCMCalloutNodes, ...newCalloutNodes].forEach((calloutNode) =>
-            this.addCopyButtonToCallout({
+            addCopyButtonToCallout({
               calloutNode,
               getCalloutBodyText: () => getCalloutBodyTextFromInnerText(calloutNode),
               tooltipText: "Copy (plain text)",
@@ -60,139 +58,12 @@ export default class CalloutCopyButtonPlugin extends Plugin {
   private addAllCopyButtons(): void {
     document.querySelectorAll(".callout").forEach((calloutNode) => {
       if (calloutNode instanceof HTMLElement) {
-        this.addCopyButtonToCallout({
+        addCopyButtonToCallout({
           calloutNode,
           getCalloutBodyText: () => getCalloutBodyTextFromInnerText(calloutNode),
           tooltipText: "Copy (plain text)",
         });
       }
-    });
-  }
-
-  private addCopyButtonToCallout({
-    calloutNode,
-    getCalloutBodyText,
-    tooltipText,
-  }: {
-    calloutNode: HTMLElement;
-    getCalloutBodyText: () => string;
-    tooltipText: string;
-  }): void {
-    console.log("Adding copy button to callout", calloutNode);
-    if (calloutNode.querySelector(".callout-copy-button")) {
-      // Copy button already exists
-      console.log("Copy button already exists; not adding another one", calloutNode);
-      return;
-    }
-
-    const codeMirrorCalloutNode = calloutNode.closest(".cm-callout");
-
-    const isLivePreview = codeMirrorCalloutNode !== null;
-    if (isLivePreview) {
-      console.log("Adding copy button to live preview CM callout", codeMirrorCalloutNode);
-      this.addCopyButtonToLivePreviewCallout({
-        calloutNode,
-        getCalloutBodyText,
-        codeMirrorCalloutNode,
-        tooltipText,
-      });
-      return;
-    }
-    console.log("Adding copy button to reading mode callout", calloutNode);
-    this.addCopyButtonToReadingModeCallout({ calloutNode, getCalloutBodyText, tooltipText });
-  }
-
-  private addCopyButtonToLivePreviewCallout({
-    calloutNode,
-    getCalloutBodyText,
-    tooltipText,
-    codeMirrorCalloutNode,
-  }: {
-    calloutNode: HTMLElement;
-    getCalloutBodyText: () => string;
-    tooltipText: string;
-    /** Parent div of the callout in the CodeMirror editor */
-    codeMirrorCalloutNode: Element;
-  }): void {
-    const calloutTitleDiv = calloutNode.querySelector(".callout-title");
-    if (calloutTitleDiv === null) {
-      console.warn("Callout title div not found; not adding copy button", calloutNode);
-      return;
-    }
-    const copyButton = createCopyButton({
-      getCalloutBodyText,
-      className: "callout-copy-button-live-preview",
-      tooltipText,
-    });
-    const editBlockButton = codeMirrorCalloutNode.querySelector(".edit-block-button");
-
-    if (editBlockButton === null) {
-      // TODO: Add copy button even if edit block button is not found
-      console.warn("Edit block button not found; not adding copy button", calloutNode);
-      return;
-    }
-
-    this.addCopyButtonBesideEditBlockButton({ calloutTitleDiv, copyButton, editBlockButton });
-  }
-
-  private addCopyButtonBesideEditBlockButton({
-    calloutTitleDiv,
-    copyButton,
-    editBlockButton,
-  }: {
-    calloutTitleDiv: Element;
-    copyButton: HTMLDivElement;
-    editBlockButton: Element;
-  }): void {
-    const calloutActionButtonsWrapper = document.createElement("div");
-    calloutActionButtonsWrapper.classList.add("callout-action-buttons");
-    calloutActionButtonsWrapper.appendChild(editBlockButton);
-    calloutActionButtonsWrapper.appendChild(copyButton);
-    calloutTitleDiv.appendChild(calloutActionButtonsWrapper);
-  }
-
-  private addCopyButtonToReadingModeCallout({
-    calloutNode,
-    getCalloutBodyText,
-    tooltipText,
-  }: {
-    calloutNode: HTMLElement;
-    getCalloutBodyText: () => string;
-    tooltipText: string;
-  }): void {
-    const copyButton = createCopyButton({
-      getCalloutBodyText,
-      className: "callout-copy-button-reading-mode",
-      tooltipText,
-    });
-    calloutNode.style.position = "relative";
-    calloutNode.appendChild(copyButton);
-  }
-
-  private postProcessMarkdown(el: HTMLElement, ctx: MarkdownPostProcessorContext): void {
-    console.log("Post-processing markdown", el);
-    const calloutNodes = el.findAll(".callout");
-    calloutNodes.forEach((calloutNode) => {
-      console.log("Processing callout node", calloutNode);
-      this.addCopyButtonToCallout({
-        calloutNode,
-        getCalloutBodyText: () => {
-          const calloutSectionInfo = ctx.getSectionInfo(calloutNode);
-          if (calloutSectionInfo === null) {
-            console.warn("Callout section info not found, can't get callout body text");
-            return "";
-          }
-          console.log("Callout section info", calloutSectionInfo);
-          const calloutBodyText = getCalloutBodyTextFromSectionInfo(calloutSectionInfo);
-          if (calloutBodyText === null) {
-            console.warn("Callout body text not found, can't get callout body text");
-            return "";
-          }
-
-          return calloutBodyText;
-        },
-        tooltipText: "Copy (Markdown)",
-      });
     });
   }
 
