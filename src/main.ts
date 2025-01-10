@@ -1,7 +1,6 @@
 import { Plugin } from "obsidian";
+import { watchAndAddCopyButtonsToDOM } from "./DOMObserver";
 import { postProcessMarkdown } from "./markdownPostProcessor";
-import { addCopyButtonToCallout } from "./utils/addCopyButtonToCallout";
-import { getCalloutBodyTextFromInnerText } from "./utils/getCalloutBodyText";
 import { calloutCopyButtonViewPlugin } from "./viewPlugin";
 
 export default class CalloutCopyButtonPlugin extends Plugin {
@@ -16,55 +15,11 @@ export default class CalloutCopyButtonPlugin extends Plugin {
 
     this.registerEditorExtension([calloutCopyButtonViewPlugin]);
 
-    this.watchAndAddCopyButtonsToDOM();
+    this.calloutDivObserver = watchAndAddCopyButtonsToDOM();
 
     // The Markdown post processor is able to access the original markdown text easier than the
     // mutation observer
     this.registerMarkdownPostProcessor(postProcessMarkdown);
-  }
-
-  private watchAndAddCopyButtonsToDOM(): void {
-    this.watchDOMForNewCallouts();
-    this.addAllCopyButtons();
-  }
-
-  private watchDOMForNewCallouts(): void {
-    const observer = this.getCalloutDivObserver();
-    observer.observe(document.body, { childList: true, subtree: true });
-    this.calloutDivObserver = observer;
-  }
-
-  private getCalloutDivObserver(): MutationObserver {
-    return new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        mutation.addedNodes.forEach((node) => {
-          if (!(node instanceof HTMLElement)) {
-            return;
-          }
-          const newCMCalloutNodes = node.querySelectorAll<HTMLDivElement>(".cm-callout");
-          const newCalloutNodes = node.querySelectorAll<HTMLDivElement>(".callout");
-          [...newCMCalloutNodes, ...newCalloutNodes].forEach((calloutNode) =>
-            addCopyButtonToCallout({
-              calloutNode,
-              getCalloutBodyText: () => getCalloutBodyTextFromInnerText(calloutNode),
-              tooltipText: "Copy (plain text)",
-            })
-          );
-        });
-      });
-    });
-  }
-
-  private addAllCopyButtons(): void {
-    document.querySelectorAll(".callout").forEach((calloutNode) => {
-      if (calloutNode instanceof HTMLElement) {
-        addCopyButtonToCallout({
-          calloutNode,
-          getCalloutBodyText: () => getCalloutBodyTextFromInnerText(calloutNode),
-          tooltipText: "Copy (plain text)",
-        });
-      }
-    });
   }
 
   onunload(): void {
@@ -98,10 +53,11 @@ export default class CalloutCopyButtonPlugin extends Plugin {
   }
 
   private disconnectCalloutDivObserver(): void {
-    if (this.calloutDivObserver !== null) {
-      this.calloutDivObserver.disconnect();
-      this.calloutDivObserver = null;
+    if (this.calloutDivObserver === null) {
+      return;
     }
+    this.calloutDivObserver.disconnect();
+    this.calloutDivObserver = null;
   }
 }
 
