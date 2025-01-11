@@ -11,7 +11,6 @@ export function addCopyPlainTextButtonToCalloutDiv({
 }): void {
   if (calloutNode.querySelector(".callout-copy-button-plain-text") !== null) {
     console.warn("Copy button already exists; not adding another one", calloutNode);
-    moveEditBlockButtonToCalloutActionButtonsWrapper(calloutNode);
     return;
   }
   console.log("Adding copy plain text button to callout", calloutNode);
@@ -22,7 +21,6 @@ export function addCopyPlainTextButtonToCalloutDiv({
     buttonClassName: "callout-copy-button-plain-text",
     isCMCalloutNode,
   });
-  moveEditBlockButtonToCalloutActionButtonsWrapper(calloutNode);
 }
 
 export function addCopyButtonToCallout({

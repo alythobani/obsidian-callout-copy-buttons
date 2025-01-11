@@ -12,7 +12,7 @@ export function postProcessMarkdown(el: HTMLElement, ctx: MarkdownPostProcessorC
     console.warn("No top-level callout node found", el);
     return;
   }
-  addCopyMarkdownFromSectionInfoButtonToCallout({
+  maybeAddCopyMarkdownFromSectionInfoButtonToCallout({
     calloutNode: topLevelCallout,
     ctx,
     isCMCalloutNode,
@@ -42,7 +42,7 @@ function getTopLevelCalloutNode(el: HTMLElement): {
   return { topLevelCallout: maybeTopLevelCallout, isCMCalloutNode: false };
 }
 
-function addCopyMarkdownFromSectionInfoButtonToCallout({
+function maybeAddCopyMarkdownFromSectionInfoButtonToCallout({
   calloutNode,
   ctx,
   isCMCalloutNode,
@@ -51,6 +51,12 @@ function addCopyMarkdownFromSectionInfoButtonToCallout({
   ctx: MarkdownPostProcessorContext;
   isCMCalloutNode: boolean;
 }): void {
+  if (isCMCalloutNode) {
+    console.warn(
+      "Section info not available in Live Preview mode; not adding copy markdown button"
+    );
+    return;
+  }
   console.log("Adding copy markdown button to callout", calloutNode);
   if (calloutNode.querySelector(".callout-copy-button-markdown")) {
     console.warn("Copy Markdown button already exists; not adding another one", calloutNode);

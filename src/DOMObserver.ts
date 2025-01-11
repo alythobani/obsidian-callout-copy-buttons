@@ -25,14 +25,12 @@ function getCalloutDivObserver(): MutationObserver {
         const newCMCalloutNodes = node.querySelectorAll<HTMLDivElement>(".cm-callout");
         if (newCMCalloutNodes.length > 0) console.log("New CM callout nodes", newCMCalloutNodes);
         for (const calloutNode of newCMCalloutNodes) {
-          addCopyPlainTextButtonToCalloutDiv({ calloutNode, isCMCalloutNode: true });
-          moveEditBlockButtonToCalloutActionButtonsWrapper(calloutNode);
+          addCopyPlainTextButtonAndMoveEditBlockButton({ calloutNode, isCMCalloutNode: true });
         }
         const newCalloutNodes = node.querySelectorAll<HTMLDivElement>(".callout");
         if (newCalloutNodes.length > 0) console.log("New non-CM callout nodes", newCalloutNodes);
         for (const calloutNode of newCalloutNodes) {
-          addCopyPlainTextButtonToCalloutDiv({ calloutNode, isCMCalloutNode: false });
-          moveEditBlockButtonToCalloutActionButtonsWrapper(calloutNode);
+          addCopyPlainTextButtonAndMoveEditBlockButton({ calloutNode, isCMCalloutNode: false });
         }
       });
     });
@@ -43,11 +41,22 @@ function addAllCopyButtons(): void {
   const cmCalloutNodes = document.querySelectorAll<HTMLElement>(".cm-callout");
   console.log("CM callout nodes", cmCalloutNodes);
   cmCalloutNodes.forEach((calloutNode) =>
-    addCopyPlainTextButtonToCalloutDiv({ calloutNode, isCMCalloutNode: true })
+    addCopyPlainTextButtonAndMoveEditBlockButton({ calloutNode, isCMCalloutNode: true })
   );
   const calloutNodes = document.querySelectorAll<HTMLElement>(".callout");
   console.log("Non-CM Callout nodes", calloutNodes);
   calloutNodes.forEach((calloutNode) =>
-    addCopyPlainTextButtonToCalloutDiv({ calloutNode, isCMCalloutNode: false })
+    addCopyPlainTextButtonAndMoveEditBlockButton({ calloutNode, isCMCalloutNode: false })
   );
+}
+
+function addCopyPlainTextButtonAndMoveEditBlockButton({
+  calloutNode,
+  isCMCalloutNode,
+}: {
+  calloutNode: HTMLElement;
+  isCMCalloutNode: boolean;
+}): void {
+  addCopyPlainTextButtonToCalloutDiv({ calloutNode, isCMCalloutNode });
+  moveEditBlockButtonToCalloutActionButtonsWrapper(calloutNode);
 }
