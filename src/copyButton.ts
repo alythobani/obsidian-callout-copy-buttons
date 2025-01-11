@@ -1,4 +1,5 @@
 import classNames from "classnames";
+import { Notice } from "obsidian";
 import { addClassNames } from "./utils/addClassNames";
 
 export const copyButtonSVGText = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon lucide-copy">
@@ -16,7 +17,7 @@ export function createCopyButton({
   tooltipText,
   className,
 }: {
-  getCalloutBodyText: () => string;
+  getCalloutBodyText: () => string | null;
   tooltipText: string;
   className?: string;
 }): HTMLDivElement {
@@ -47,11 +48,16 @@ async function onCopyButtonClick({
   getCalloutBodyText,
   copyButton,
 }: {
-  getCalloutBodyText: () => string;
+  getCalloutBodyText: () => string | null;
   copyButton: HTMLDivElement;
 }): Promise<void> {
   if (copyButton.hasAttribute("disabled")) return;
   const calloutBodyText = getCalloutBodyText();
+
+  if (calloutBodyText === null) {
+    new Notice("Error: Could not copy callout text");
+    return;
+  }
 
   await navigator.clipboard.writeText(calloutBodyText);
 

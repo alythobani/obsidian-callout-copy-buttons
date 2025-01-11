@@ -68,13 +68,12 @@ function maybeAddCopyMarkdownFromSectionInfoButtonToCallout({
       const calloutSectionInfo = ctx.getSectionInfo(calloutNode);
       if (calloutSectionInfo === null) {
         console.warn("Callout section info not found, can't get callout body text");
-        return "";
+        return null;
       }
       console.log("Callout section info", calloutSectionInfo);
       const calloutBodyText = getCalloutBodyTextFromSectionInfo(calloutSectionInfo);
       if (calloutBodyText === null) {
-        console.warn("Callout body text not found, can't get callout body text");
-        return "";
+        return null;
       }
       return calloutBodyText;
     },

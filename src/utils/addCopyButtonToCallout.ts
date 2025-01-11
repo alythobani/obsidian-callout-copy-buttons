@@ -31,7 +31,7 @@ export function addCopyButtonToCallout({
   isCMCalloutNode,
 }: {
   calloutNode: HTMLElement;
-  getCalloutBodyText: () => string;
+  getCalloutBodyText: () => string | null;
   tooltipText: string;
   buttonClassName?: string | undefined;
   isCMCalloutNode: boolean;
