@@ -30,17 +30,14 @@ export function createCopyButton({
   // which changes cursor/selection position in the editor)
   copyButton.addEventListener("mousedown", (e) => {
     e.preventDefault();
-    e.stopPropagation();
     if (copyButton.hasAttribute("disabled")) return;
     void onCopyButtonClick({ getCalloutBodyText, copyButton });
-    return false;
   });
 
-  // For some reason still need this to fully prevent the default behavior of the `click` event
+  // For some reason still need this to prevent the default behavior of clicking the callout block
+  // (i.e. moving the cursor into the block to edit the callout)
   copyButton.addEventListener("click", (e) => {
-    e.preventDefault();
     e.stopPropagation();
-    return false;
   });
 
   return copyButton;
