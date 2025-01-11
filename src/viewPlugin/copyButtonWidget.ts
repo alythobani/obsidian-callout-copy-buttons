@@ -1,5 +1,5 @@
 import { WidgetType } from "@codemirror/view";
-import { copyButtonCheckmarkIconSVGText, copyButtonSVGText } from "./copyButton";
+import { copyButtonCheckmarkIconSVGText, copyButtonSVGText } from "../copyButton";
 
 export class CopyButtonWidget extends WidgetType {
   constructor(private text: string) {

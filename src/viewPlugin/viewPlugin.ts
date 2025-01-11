@@ -8,8 +8,8 @@ import {
   ViewPlugin,
   type ViewUpdate,
 } from "@codemirror/view";
+import { getCalloutBodyLines } from "../utils/getCalloutBodyText";
 import { CopyButtonWidget } from "./copyButtonWidget";
-import { getCalloutBodyLines } from "./utils/getCalloutBodyText";
 
 const CALLOUT_HEADER_WITH_INDENT_CAPTURE_REGEX = /^((?:> )+)\[!.+\]/;
 
