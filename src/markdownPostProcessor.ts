@@ -6,10 +6,9 @@ import {
 import { getCalloutBodyTextFromSectionInfo } from "./utils/getCalloutBodyText";
 
 export function postProcessMarkdown(el: HTMLElement, ctx: MarkdownPostProcessorContext): void {
-  console.log("Post-processing markdown", el);
   const { topLevelCallout, isCMCalloutNode } = getTopLevelCalloutNode(el);
   if (topLevelCallout === null) {
-    console.warn("No top-level callout node found", el);
+    // Callout node not found within the rendered markdown section
     return;
   }
   maybeAddCopyMarkdownFromSectionInfoButtonToCallout({
@@ -20,9 +19,7 @@ export function postProcessMarkdown(el: HTMLElement, ctx: MarkdownPostProcessorC
   addCopyPlainTextButtonToCalloutDiv({ calloutNode: topLevelCallout, isCMCalloutNode });
   const nestedCallouts = topLevelCallout.findAll(".callout");
   nestedCallouts.forEach((nestedCallout) => {
-    console.group("ADDING PLAIN TEXT BUTTON TO NESTED CALLOUT", nestedCallout);
-    addCopyPlainTextButtonToCalloutDiv({ calloutNode: topLevelCallout, isCMCalloutNode: false });
-    console.groupEnd();
+    addCopyPlainTextButtonToCalloutDiv({ calloutNode: nestedCallout, isCMCalloutNode: false });
   });
 }
 
@@ -32,7 +29,6 @@ function getTopLevelCalloutNode(el: HTMLElement): {
 } {
   const maybeCMCalloutNode = el.closest<HTMLElement>(".cm-callout");
   if (maybeCMCalloutNode !== null) {
-    console.log("FOUND CM CALLOUT NODE", maybeCMCalloutNode);
     return { topLevelCallout: maybeCMCalloutNode, isCMCalloutNode: true };
   }
   const maybeTopLevelCallout = el.querySelector<HTMLElement>(".callout");
@@ -52,14 +48,11 @@ function maybeAddCopyMarkdownFromSectionInfoButtonToCallout({
   isCMCalloutNode: boolean;
 }): void {
   if (isCMCalloutNode) {
-    console.warn(
-      "Section info not available in Live Preview mode; not adding copy markdown button"
-    );
+    // Section info not available in CodeMirror callouts; not adding copy markdown button
     return;
   }
-  console.log("Adding copy markdown button to callout", calloutNode);
   if (calloutNode.querySelector(".callout-copy-button-markdown")) {
-    console.warn("Copy Markdown button already exists; not adding another one", calloutNode);
+    // Copy Markdown button already exists; not adding another one
     return;
   }
   addCopyButtonToCallout({
@@ -67,10 +60,9 @@ function maybeAddCopyMarkdownFromSectionInfoButtonToCallout({
     getCalloutBodyText: () => {
       const calloutSectionInfo = ctx.getSectionInfo(calloutNode);
       if (calloutSectionInfo === null) {
-        console.warn("Callout section info not found, can't get callout body text");
+        // Section info not available for some reason
         return null;
       }
-      console.log("Callout section info", calloutSectionInfo);
       const calloutBodyText = getCalloutBodyTextFromSectionInfo(calloutSectionInfo);
       if (calloutBodyText === null) {
         return null;

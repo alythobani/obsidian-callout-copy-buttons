@@ -23,12 +23,10 @@ function getCalloutDivObserver(): MutationObserver {
           return;
         }
         const newCMCalloutNodes = node.querySelectorAll<HTMLDivElement>(".cm-callout");
-        if (newCMCalloutNodes.length > 0) console.log("New CM callout nodes", newCMCalloutNodes);
         for (const calloutNode of newCMCalloutNodes) {
           addCopyPlainTextButtonAndMoveEditBlockButton({ calloutNode, isCMCalloutNode: true });
         }
         const newCalloutNodes = node.querySelectorAll<HTMLDivElement>(".callout");
-        if (newCalloutNodes.length > 0) console.log("New non-CM callout nodes", newCalloutNodes);
         for (const calloutNode of newCalloutNodes) {
           addCopyPlainTextButtonAndMoveEditBlockButton({ calloutNode, isCMCalloutNode: false });
         }
@@ -39,12 +37,10 @@ function getCalloutDivObserver(): MutationObserver {
 
 function addAllCopyButtons(): void {
   const cmCalloutNodes = document.querySelectorAll<HTMLElement>(".cm-callout");
-  console.log("CM callout nodes", cmCalloutNodes);
   cmCalloutNodes.forEach((calloutNode) =>
     addCopyPlainTextButtonAndMoveEditBlockButton({ calloutNode, isCMCalloutNode: true })
   );
   const calloutNodes = document.querySelectorAll<HTMLElement>(".callout");
-  console.log("Non-CM Callout nodes", calloutNodes);
   calloutNodes.forEach((calloutNode) =>
     addCopyPlainTextButtonAndMoveEditBlockButton({ calloutNode, isCMCalloutNode: false })
   );

@@ -33,11 +33,9 @@ export default class CalloutCopyButtonPlugin extends Plugin {
     document.querySelectorAll(".callout-action-buttons").forEach((wrapper) => {
       const editBlockButton = wrapper.querySelector(".edit-block-button");
       this.moveEditBlockButtonOutOfWrapper(editBlockButton);
-      console.log("Removing action buttons wrapper", wrapper);
       wrapper.remove();
     });
     document.querySelectorAll(".callout-copy-button").forEach((button) => {
-      console.log("Removed copy button", button);
       button.remove();
     });
   }

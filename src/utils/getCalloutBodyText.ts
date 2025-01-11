@@ -51,12 +51,12 @@ function getCalloutBodyLinesFromSectionInfo(
   const allLines = text.split("\n");
   const headerLine = allLines[lineStart];
   if (headerLine === undefined) {
-    console.warn("Header line not found", calloutSectionInfo);
+    // Line start is out of bounds
     return null;
   }
   const calloutIndent = CALLOUT_HEADER_WITH_INDENT_CAPTURE_REGEX.exec(headerLine)?.[1];
   if (calloutIndent === undefined) {
-    console.warn("Callout indent not found", { headerLine, calloutSectionInfo });
+    // Line does not match callout header regex
     return null;
   }
   const calloutBodyLines = [];
