@@ -27,6 +27,7 @@ function getCalloutDivObserver(): MutationObserver {
             calloutNode,
             getCalloutBodyText: () => getCalloutBodyTextFromInnerText(calloutNode),
             tooltipText: "Copy (plain text)",
+            buttonClassName: "callout-copy-button-plain-text",
           })
         );
       });

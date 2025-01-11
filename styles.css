@@ -1,4 +1,5 @@
-.callout-copy-button {
+.callout-copy-button,
+.callout-copy-button-widget {
   position: absolute;
   top: var(--size-2-2);
   right: 32px;
@@ -22,12 +23,36 @@
 
   &.just-copied {
     color: var(--text-success);
+    &::after {
+      display: none;
+    }
+  }
+
+  &.callout-copy-button-plain-text::after,
+  &.callout-copy-button-markdown::after {
+    font-size: 0.6em;
+    position: absolute;
+    top: 59%;
+    left: 59%;
+    transform: translate(-50%, -50%);
+  }
+  &.callout-copy-button-plain-text::after {
+    content: "P";
+  }
+  &.callout-copy-button-markdown::after {
+    content: "M";
   }
 }
 
 .cm-callout:hover,
 .callout:hover {
   .callout-copy-button {
+    opacity: 1;
+  }
+}
+
+.cm-line:hover {
+  .callout-copy-button-widget {
     opacity: 1;
   }
 }
@@ -53,26 +78,6 @@
 }
 
 .callout-copy-button-widget {
-  position: absolute;
   top: 0px;
   right: 0px;
-  padding: var(--size-2-2) var(--size-2-3);
-  background: none !important;
-  border: none;
-  box-shadow: none !important;
-  border-radius: var(--radius-s);
-  font-family: var(--font-interface);
-  font-size: var(--font-ui-smaller);
-  cursor: var(--cursor);
-  color: var(--text-muted) !important;
-  fill: var(--text-muted);
-  stroke: var(--text-muted);
-  svg {
-    width: var(--icon-size);
-    height: var(--icon-size);
-  }
-}
-
-.callout-copy-button-widget:hover {
-  background-color: var(--background-modifier-hover) !important;
 }

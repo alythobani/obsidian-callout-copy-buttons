@@ -8,8 +8,12 @@ export class CopyButtonWidget extends WidgetType {
 
   toDOM(): HTMLElement {
     const copyButton = document.createElement("div");
-    copyButton.addClasses(["callout-copy-button-widget"]);
-    copyButton.setAttribute("aria-label", "Copy");
+    copyButton.addClasses([
+      "callout-copy-button",
+      "callout-copy-button-widget",
+      "callout-copy-button-markdown",
+    ]);
+    copyButton.setAttribute("aria-label", "Copy (Markdown)");
 
     copyButton.innerHTML = copyButtonSVGText;
 

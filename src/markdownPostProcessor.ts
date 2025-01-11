@@ -24,6 +24,7 @@ export function postProcessMarkdown(el: HTMLElement, ctx: MarkdownPostProcessorC
         return calloutBodyText;
       },
       tooltipText: "Copy (Markdown)",
+      buttonClassName: "callout-copy-button-markdown",
     });
   });
 }

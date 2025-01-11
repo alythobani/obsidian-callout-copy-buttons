@@ -1,13 +1,16 @@
+import classNames from "classnames";
 import { createCopyButton } from "../copyButton";
 
 export function addCopyButtonToCallout({
   calloutNode,
   getCalloutBodyText,
   tooltipText,
+  buttonClassName,
 }: {
   calloutNode: HTMLElement;
   getCalloutBodyText: () => string;
   tooltipText: string;
+  buttonClassName?: string | undefined;
 }): void {
   console.log("Adding copy button to callout", calloutNode);
   if (calloutNode.querySelector(".callout-copy-button")) {
@@ -26,11 +29,17 @@ export function addCopyButtonToCallout({
       getCalloutBodyText,
       codeMirrorCalloutNode,
       tooltipText,
+      buttonClassName,
     });
     return;
   }
   console.log("Adding copy button to reading mode callout", calloutNode);
-  addCopyButtonToReadingModeCallout({ calloutNode, getCalloutBodyText, tooltipText });
+  addCopyButtonToReadingModeCallout({
+    calloutNode,
+    getCalloutBodyText,
+    tooltipText,
+    buttonClassName,
+  });
 }
 
 function addCopyButtonToLivePreviewCallout({
@@ -38,12 +47,14 @@ function addCopyButtonToLivePreviewCallout({
   getCalloutBodyText,
   tooltipText,
   codeMirrorCalloutNode,
+  buttonClassName,
 }: {
   calloutNode: HTMLElement;
   getCalloutBodyText: () => string;
   tooltipText: string;
   /** Parent div of the callout in the CodeMirror editor */
   codeMirrorCalloutNode: Element;
+  buttonClassName?: string | undefined;
 }): void {
   const calloutTitleDiv = calloutNode.querySelector(".callout-title");
   if (calloutTitleDiv === null) {
@@ -52,7 +63,7 @@ function addCopyButtonToLivePreviewCallout({
   }
   const copyButton = createCopyButton({
     getCalloutBodyText,
-    className: "callout-copy-button-live-preview",
+    className: classNames("callout-copy-button-live-preview", buttonClassName),
     tooltipText,
   });
   const editBlockButton = codeMirrorCalloutNode.querySelector(".edit-block-button");
@@ -86,14 +97,16 @@ function addCopyButtonToReadingModeCallout({
   calloutNode,
   getCalloutBodyText,
   tooltipText,
+  buttonClassName,
 }: {
   calloutNode: HTMLElement;
   getCalloutBodyText: () => string;
   tooltipText: string;
+  buttonClassName?: string | undefined;
 }): void {
   const copyButton = createCopyButton({
     getCalloutBodyText,
-    className: "callout-copy-button-reading-mode",
+    className: classNames("callout-copy-button-reading-mode", buttonClassName),
     tooltipText,
   });
   calloutNode.style.position = "relative";
