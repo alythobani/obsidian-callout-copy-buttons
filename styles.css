@@ -1,7 +1,9 @@
+.callout {
+  position: relative;
+}
+
 .callout-copy-button {
-  position: absolute;
-  top: var(--size-2-2);
-  inset-inline-end: 32px;
+  position: relative;
   display: flex;
   padding: var(--size-2-2) var(--size-2-3);
   background: none !important;
@@ -57,15 +59,19 @@
 
 .callout-action-buttons {
   position: absolute;
-  top: 0px;
-  inset-inline-end: 0px;
-}
-
-.callout-copy-button-reading-mode {
+  top: var(--size-2-2);
   inset-inline-end: var(--size-2-2);
+  display: flex;
+  .edit-block-button {
+    position: relative !important;
+    top: 0px !important;
+    inset-inline-end: 0px !important;
+  }
 }
 
 .callout-copy-button-widget {
+  position: absolute;
+  opacity: 1;
   top: 0px;
   inset-inline-end: 0px;
 }

@@ -28,7 +28,7 @@ const config: webpack.Configuration = {
     libraryTarget: "commonjs",
   },
   optimization: {
-    minimize: true,
+    minimize: false,
     minimizer: [
       new TerserPlugin({
         extractComments: false,

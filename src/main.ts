@@ -13,13 +13,14 @@ export default class CalloutCopyButtonPlugin extends Plugin {
   onload(): void {
     this.logInfo("Loading Callout Copy Button plugin");
 
-    this.registerEditorExtension([calloutCopyButtonViewPlugin]);
-
-    this.calloutDivObserver = watchAndAddCopyButtonsToDOM();
+    this.app.workspace.onLayoutReady(() => {
+      this.registerEditorExtension([calloutCopyButtonViewPlugin]);
+      this.registerMarkdownPostProcessor(postProcessMarkdown);
+      this.calloutDivObserver = watchAndAddCopyButtonsToDOM();
+    });
 
     // The Markdown post processor is able to access the original markdown text easier than the
     // mutation observer
-    this.registerMarkdownPostProcessor(postProcessMarkdown);
   }
 
   onunload(): void {

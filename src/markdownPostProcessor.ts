@@ -1,36 +1,59 @@
 import { type MarkdownPostProcessorContext } from "obsidian";
 import {
   addCopyButtonToCallout,
-  addCopyPlainTextButtonToCallout,
+  addCopyPlainTextButtonToCalloutDiv,
 } from "./utils/addCopyButtonToCallout";
 import { getCalloutBodyTextFromSectionInfo } from "./utils/getCalloutBodyText";
 
 export function postProcessMarkdown(el: HTMLElement, ctx: MarkdownPostProcessorContext): void {
   console.log("Post-processing markdown", el);
-  const topLevelCallout = el.querySelector<HTMLElement>(".callout");
+  const { topLevelCallout, isCMCalloutNode } = getTopLevelCalloutNode(el);
   if (topLevelCallout === null) {
+    console.warn("No top-level callout node found", el);
     return;
   }
-  addCopyMarkdownFromSectionInfoButtonToCallout({ calloutNode: topLevelCallout, ctx });
-  addCopyPlainTextButtonToCallout({ calloutNode: topLevelCallout });
+  addCopyMarkdownFromSectionInfoButtonToCallout({
+    calloutNode: topLevelCallout,
+    ctx,
+    isCMCalloutNode,
+  });
+  addCopyPlainTextButtonToCalloutDiv({ calloutNode: topLevelCallout, isCMCalloutNode });
   const nestedCallouts = topLevelCallout.findAll(".callout");
   nestedCallouts.forEach((nestedCallout) => {
     console.group("ADDING PLAIN TEXT BUTTON TO NESTED CALLOUT", nestedCallout);
-    addCopyPlainTextButtonToCallout({ calloutNode: nestedCallout });
+    addCopyPlainTextButtonToCalloutDiv({ calloutNode: topLevelCallout, isCMCalloutNode: false });
     console.groupEnd();
   });
+}
+
+function getTopLevelCalloutNode(el: HTMLElement): {
+  topLevelCallout: HTMLElement | null;
+  isCMCalloutNode: boolean;
+} {
+  const maybeCMCalloutNode = el.closest<HTMLElement>(".cm-callout");
+  if (maybeCMCalloutNode !== null) {
+    console.log("FOUND CM CALLOUT NODE", maybeCMCalloutNode);
+    return { topLevelCallout: maybeCMCalloutNode, isCMCalloutNode: true };
+  }
+  const maybeTopLevelCallout = el.querySelector<HTMLElement>(".callout");
+  if (maybeTopLevelCallout === null) {
+    return { topLevelCallout: null, isCMCalloutNode: false };
+  }
+  return { topLevelCallout: maybeTopLevelCallout, isCMCalloutNode: false };
 }
 
 function addCopyMarkdownFromSectionInfoButtonToCallout({
   calloutNode,
   ctx,
+  isCMCalloutNode,
 }: {
   calloutNode: HTMLElement;
   ctx: MarkdownPostProcessorContext;
+  isCMCalloutNode: boolean;
 }): void {
   console.log("Adding copy markdown button to callout", calloutNode);
   if (calloutNode.querySelector(".callout-copy-button-markdown")) {
-    console.warn("Copy button already exists; not adding another one", calloutNode);
+    console.warn("Copy Markdown button already exists; not adding another one", calloutNode);
     return;
   }
   addCopyButtonToCallout({
@@ -51,5 +74,6 @@ function addCopyMarkdownFromSectionInfoButtonToCallout({
     },
     tooltipText: "Copy (Markdown)",
     buttonClassName: "callout-copy-button-markdown",
+    isCMCalloutNode,
   });
 }
