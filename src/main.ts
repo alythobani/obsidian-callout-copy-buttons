@@ -1,6 +1,7 @@
 import { Plugin } from "obsidian";
 import { watchAndAddCopyButtonsToDOM } from "./DOMObserver";
 import { postProcessMarkdown } from "./markdownPostProcessor";
+import { removeCopyButtonsAndRestoreEditBlockButton } from "./utils/cleanupDOM";
 import { calloutCopyButtonViewPlugin } from "./viewPlugin";
 
 export default class CalloutCopyButtonPlugin extends Plugin {
@@ -18,37 +19,12 @@ export default class CalloutCopyButtonPlugin extends Plugin {
       this.registerMarkdownPostProcessor(postProcessMarkdown);
       this.calloutDivObserver = watchAndAddCopyButtonsToDOM();
     });
-
-    // The Markdown post processor is able to access the original markdown text easier than the
-    // mutation observer
   }
 
   onunload(): void {
     this.logInfo("Unloading Callout Copy Button plugin");
-    this.removeCalloutCopyButtons();
+    removeCopyButtonsAndRestoreEditBlockButton();
     this.disconnectCalloutDivObserver();
-  }
-
-  private removeCalloutCopyButtons(): void {
-    document.querySelectorAll(".callout-action-buttons").forEach((wrapper) => {
-      const editBlockButton = wrapper.querySelector(".edit-block-button");
-      this.moveEditBlockButtonOutOfWrapper(editBlockButton);
-      wrapper.remove();
-    });
-    document.querySelectorAll(".callout-copy-button").forEach((button) => {
-      button.remove();
-    });
-  }
-
-  private moveEditBlockButtonOutOfWrapper(editBlockButton: Element | null): void {
-    if (editBlockButton === null) {
-      return;
-    }
-    const cmCalloutParent = getCodeMirrorCalloutParent(editBlockButton);
-    if (cmCalloutParent === null) {
-      return;
-    }
-    cmCalloutParent.appendChild(editBlockButton);
   }
 
   private disconnectCalloutDivObserver(): void {
@@ -58,8 +34,4 @@ export default class CalloutCopyButtonPlugin extends Plugin {
     this.calloutDivObserver.disconnect();
     this.calloutDivObserver = null;
   }
-}
-
-function getCodeMirrorCalloutParent(node: Element): Element | null {
-  return node.closest(".cm-callout");
 }
