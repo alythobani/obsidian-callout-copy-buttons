@@ -30,10 +30,10 @@
 
   &.callout-copy-button-plain-text::after,
   &.callout-copy-button-markdown::after {
-    font-size: 0.6em;
+    font-size: 0.65em;
     position: absolute;
-    top: 59%;
-    left: 59%;
+    top: 58%;
+    left: 58%;
     transform: translate(-50%, -50%);
   }
   &.callout-copy-button-plain-text::after {
