@@ -1,5 +1,4 @@
-.callout-copy-button,
-.callout-copy-button-widget {
+.callout-copy-button {
   position: absolute;
   top: var(--size-2-2);
   inset-inline-end: 32px;
@@ -19,6 +18,10 @@
   svg {
     width: var(--icon-size);
     height: var(--icon-size);
+  }
+
+  &:hover {
+    background-color: var(--background-modifier-hover) !important;
   }
 
   &.just-copied {
@@ -44,25 +47,12 @@
   }
 }
 
+.cm-line:hover,
 .cm-callout:hover,
 .callout:hover {
   .callout-copy-button {
     opacity: 1;
   }
-}
-
-.cm-line:hover {
-  .callout-copy-button-widget {
-    opacity: 1;
-  }
-}
-
-.callout-copy-button:hover {
-  background-color: var(--background-modifier-hover) !important;
-}
-
-.cm-callout .callout-copy-button {
-  margin-left: auto;
 }
 
 .callout-action-buttons {
