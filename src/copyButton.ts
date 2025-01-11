@@ -21,42 +21,51 @@ export function createCopyButton({
   className?: string;
 }): HTMLDivElement {
   const copyButton = document.createElement("div");
+
   addClassNames({ el: copyButton, classNames: classNames("callout-copy-button", className) });
   copyButton.setAttribute("aria-label", tooltipText);
   copyButton.innerHTML = copyButtonSVGText;
-  copyButton.addEventListener("click", (e) => {
+
+  // Using `mousedown` lets us prevent the default behavior of the `click` event (e.g. taking focus
+  // which changes cursor/selection position in the editor)
+  copyButton.addEventListener("mousedown", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     if (copyButton.hasAttribute("disabled")) return;
-    onCopyButtonClick({ e, getCalloutBodyText, copyButton });
+    void onCopyButtonClick({ getCalloutBodyText, copyButton });
+    return false;
   });
+
+  // For some reason still need this to fully prevent the default behavior of the `click` event
+  copyButton.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    return false;
+  });
+
   return copyButton;
 }
 
-function onCopyButtonClick({
-  e,
+async function onCopyButtonClick({
   getCalloutBodyText,
   copyButton,
 }: {
-  e: MouseEvent;
   getCalloutBodyText: () => string;
   copyButton: HTMLDivElement;
-}): void {
-  e.stopPropagation();
+}): Promise<void> {
   if (copyButton.hasAttribute("disabled")) return;
   const calloutBodyText = getCalloutBodyText();
-  navigator.clipboard
-    .writeText(calloutBodyText)
-    .then(() => {
-      console.log(`Copied: ${JSON.stringify(calloutBodyText)}`);
-      copyButton.innerHTML = copyButtonCheckmarkIconSVGText;
-      copyButton.addClass("just-copied");
-      copyButton.setAttribute("disabled", "true");
-      setTimeout(() => {
-        copyButton.innerHTML = copyButtonSVGText;
-        copyButton.removeClass("just-copied");
-        copyButton.removeAttribute("disabled");
-      }, 3000);
-    })
-    .catch((error: unknown) => {
-      console.error(error);
-    });
+
+  await navigator.clipboard.writeText(calloutBodyText);
+
+  console.log(`Copied: ${JSON.stringify(calloutBodyText)}`);
+  copyButton.innerHTML = copyButtonCheckmarkIconSVGText;
+  copyButton.classList.add("just-copied");
+  copyButton.setAttribute("disabled", "true");
+
+  setTimeout(() => {
+    copyButton.innerHTML = copyButtonSVGText;
+    copyButton.classList.remove("just-copied");
+    copyButton.removeAttribute("disabled");
+  }, 3000);
 }
