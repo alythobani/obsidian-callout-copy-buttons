@@ -1,4 +1,7 @@
-module.exports = {
+import TerserPlugin from "terser-webpack-plugin";
+import webpack from "webpack";
+
+const config: webpack.Configuration = {
   entry: "./src/main.ts",
   mode: "production",
   module: {
@@ -12,12 +15,6 @@ module.exports = {
   },
   resolve: {
     extensions: [".ts", ".js"],
-    alias: {
-      // Ensure the correct instance of shared CodeMirror packages
-      "@codemirror/state": require.resolve(__dirname, "node_modules/@codemirror/state"),
-      "@codemirror/view": require.resolve(__dirname, "node_modules/@codemirror/view"),
-      // Do not alias @codemirror/language because it is bundled with your plugin
-    },
   },
   externals: {
     // Mark these as external because they are provided by Obsidian
@@ -30,4 +27,14 @@ module.exports = {
     path: __dirname,
     libraryTarget: "commonjs",
   },
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        extractComments: false,
+      }),
+    ],
+  },
 };
+
+export default config;

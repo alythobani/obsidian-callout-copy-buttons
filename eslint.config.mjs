@@ -9,7 +9,7 @@ export default tseslint.config(
   ...tseslint.configs.stylisticTypeChecked,
   {
     files: ["**/*.ts"],
-    ignores: ["vitest.config.ts"],
+    ignores: ["webpack.config.ts"],
     languageOptions: {
       parserOptions: {
         projectService: true,

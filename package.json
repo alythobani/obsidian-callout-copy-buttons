@@ -1,6 +1,5 @@
 {
   "private": true,
-  "type": "module",
   "name": "obsidian-callout-copy-button",
   "description": "An Obsidian plugin that adds a copy button to callout blocks in your notes.",
   "main": "./main.js",
@@ -13,13 +12,17 @@
     "lint": "eslint . --ext .ts"
   },
   "dependencies": {
+    "classnames": "^2.5.1",
     "obsidian": "^1.7.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
     "@types/node": "^22.10.2",
+    "@types/webpack": "^5.28.5",
     "eslint": "^9.17.0",
+    "terser-webpack-plugin": "^5.3.11",
     "ts-loader": "^9.5.1",
+    "ts-node": "^10.9.2",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.18.2",
     "webpack": "^5.97.1",
