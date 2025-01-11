@@ -19,10 +19,11 @@ export function getCalloutBodyLines({
   doc: Text;
   /** The indent of the callout (matched from the header), some positive multiple of "> " */
   calloutIndent: string;
+  /** 1-indexed */
   bodyStartLine: number;
 }): string[] {
   const calloutBodyLines = [];
-  for (let i = bodyStartLine; i < doc.lines; i++) {
+  for (let i = bodyStartLine; i <= doc.lines; i++) {
     const maybeBodyLineWithIndent = doc.line(i).text;
     if (!maybeBodyLineWithIndent.startsWith(calloutIndent)) {
       return calloutBodyLines;

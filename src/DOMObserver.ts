@@ -1,5 +1,4 @@
-import { addCopyButtonToCallout } from "./utils/addCopyButtonToCallout";
-import { getCalloutBodyTextFromInnerText } from "./utils/getCalloutBodyText";
+import { addCopyPlainTextButtonToCallout } from "./utils/addCopyButtonToCallout";
 
 export function watchAndAddCopyButtonsToDOM(): MutationObserver {
   const observer = watchDOMForNewCallouts();
@@ -23,12 +22,7 @@ function getCalloutDivObserver(): MutationObserver {
         const newCMCalloutNodes = node.querySelectorAll<HTMLDivElement>(".cm-callout");
         const newCalloutNodes = node.querySelectorAll<HTMLDivElement>(".callout");
         [...newCMCalloutNodes, ...newCalloutNodes].forEach((calloutNode) =>
-          addCopyButtonToCallout({
-            calloutNode,
-            getCalloutBodyText: () => getCalloutBodyTextFromInnerText(calloutNode),
-            tooltipText: "Copy (plain text)",
-            buttonClassName: "callout-copy-button-plain-text",
-          })
+          addCopyPlainTextButtonToCallout({ calloutNode })
         );
       });
     });
@@ -36,13 +30,7 @@ function getCalloutDivObserver(): MutationObserver {
 }
 
 function addAllCopyButtons(): void {
-  document.querySelectorAll(".callout").forEach((calloutNode) => {
-    if (calloutNode instanceof HTMLElement) {
-      addCopyButtonToCallout({
-        calloutNode,
-        getCalloutBodyText: () => getCalloutBodyTextFromInnerText(calloutNode),
-        tooltipText: "Copy (plain text)",
-      });
-    }
-  });
+  document
+    .querySelectorAll<HTMLElement>(".callout")
+    .forEach((calloutNode) => addCopyPlainTextButtonToCallout({ calloutNode }));
 }

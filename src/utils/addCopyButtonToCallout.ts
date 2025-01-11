@@ -1,5 +1,24 @@
 import classNames from "classnames";
 import { createCopyButton } from "../copyButton";
+import { getCalloutBodyTextFromInnerText } from "./getCalloutBodyText";
+
+export function addCopyPlainTextButtonToCallout({
+  calloutNode,
+}: {
+  calloutNode: HTMLElement;
+}): void {
+  console.log("Adding copy plain text button to callout", calloutNode);
+  if (calloutNode.querySelector(".callout-copy-button-plain-text")) {
+    console.warn("Copy button already exists; not adding another one", calloutNode);
+    return;
+  }
+  addCopyButtonToCallout({
+    calloutNode,
+    getCalloutBodyText: () => getCalloutBodyTextFromInnerText(calloutNode),
+    tooltipText: "Copy (plain text)",
+    buttonClassName: "callout-copy-button-plain-text",
+  });
+}
 
 export function addCopyButtonToCallout({
   calloutNode,
@@ -12,13 +31,6 @@ export function addCopyButtonToCallout({
   tooltipText: string;
   buttonClassName?: string | undefined;
 }): void {
-  console.log("Adding copy button to callout", calloutNode);
-  if (calloutNode.querySelector(".callout-copy-button")) {
-    // Copy button already exists
-    console.warn("Copy button already exists; not adding another one", calloutNode);
-    return;
-  }
-
   const codeMirrorCalloutNode = calloutNode.closest(".cm-callout");
 
   const isLivePreview = codeMirrorCalloutNode !== null;
