@@ -59,8 +59,9 @@
 
 .callout-action-buttons {
   position: absolute;
-  top: var(--size-2-2);
-  inset-inline-end: var(--size-2-2);
+  /* Match the placement of the copy button on codeblocks */
+  top: 6px;
+  inset-inline-end: 6px;
   display: flex;
   .edit-block-button {
     position: relative !important;
