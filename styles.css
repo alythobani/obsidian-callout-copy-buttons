@@ -2,7 +2,7 @@
 .callout-copy-button-widget {
   position: absolute;
   top: var(--size-2-2);
-  right: 32px;
+  inset-inline-end: 32px;
   display: flex;
   padding: var(--size-2-2) var(--size-2-3);
   background: none !important;
@@ -68,16 +68,14 @@
 .callout-action-buttons {
   position: absolute;
   top: 0px;
-  right: 0px;
+  inset-inline-end: 0px;
 }
 
 .callout-copy-button-reading-mode {
-  position: absolute;
-  top: 8px;
-  right: 8px;
+  inset-inline-end: var(--size-2-2);
 }
 
 .callout-copy-button-widget {
   top: 0px;
-  right: 0px;
+  inset-inline-end: 0px;
 }
