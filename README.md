@@ -1,6 +1,6 @@
 # Callout Copy Buttons
 
-An [Obsidian plugin](https://obsidian.md/plugins?id=callout-copy-buttons) that adds copy buttons to callout blocks in your notes.
+An Obsidian plugin that adds copy buttons to callout blocks in your notes.
 
 ## Features
 
