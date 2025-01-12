@@ -43,6 +43,6 @@ It is the mark of an educated mind to be able to entertain a thought without acc
 
 ## Contributing & Feedback
 
-My capacity may be limited for this plugin, but feel free to [open an issue](TODO-LINK) for any bug reports or feature requests and I'll take a look if I do have time. Also feel free to submit a pull request or fork the project.
+My capacity may be limited for this plugin, but feel free to [open an issue](https://github.com/alythobani/obsidian-callout-copy-buttons/issues) for any bug reports or feature requests and I'll take a look if I do have time. Also feel free to submit a pull request or fork the project.
 
 Have a great day and try to make someone else's day great too! 😊
