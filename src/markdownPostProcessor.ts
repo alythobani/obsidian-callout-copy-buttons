@@ -32,13 +32,6 @@ function postProcessMarkdown(
     isCMCalloutNode,
     pluginSettingsManager,
   });
-  const { showCopyPlainTextButton: showCopyPlainTextButton } =
-    pluginSettingsManager.getSetting("readingModeSettings");
-  const isReadingMode = !isCMCalloutNode; // .cm-callout nodes are only present in Live Preview mode
-  if (isReadingMode && !showCopyPlainTextButton) {
-    // User has disabled Copy Plain Text buttons in Reading Mode; return early without adding them
-    return;
-  }
   addCopyPlainTextButtonToCalloutDiv({
     calloutNode: topLevelCallout,
     isCMCalloutNode,

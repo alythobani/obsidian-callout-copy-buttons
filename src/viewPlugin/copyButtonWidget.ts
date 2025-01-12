@@ -1,7 +1,7 @@
 import { WidgetType } from "@codemirror/view";
 import classNames from "classnames";
 import { copyButtonCheckmarkIconSVGText, copyButtonSVGText } from "../copyButton";
-import { getCopyButtonSettingsClassName, type PluginSettingsManager } from "../settings";
+import { type PluginSettingsManager } from "../settings";
 import { addClassNames } from "../utils/addClassNames";
 
 export class CopyButtonWidget extends WidgetType {
@@ -15,7 +15,7 @@ export class CopyButtonWidget extends WidgetType {
       "callout-copy-button",
       "callout-copy-button-widget",
       "callout-copy-button-markdown",
-      getCopyButtonSettingsClassName(this.pluginSettingsManager)
+      this.pluginSettingsManager.getCopyButtonSettingsClassName()
     );
     addClassNames({ el: copyButton, classNames: className });
     copyButton.setAttribute("aria-label", "Copy (Markdown)");

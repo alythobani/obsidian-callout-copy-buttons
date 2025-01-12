@@ -53,6 +53,13 @@ export class PluginSettingsManager extends PluginSettingTab {
     this.addSettingTab();
   }
 
+  /**
+   * Returns the class names for the copy buttons based on the plugin settings.
+   */
+  public getCopyButtonSettingsClassName(): string {
+    return classNames(this.getCopyButtonSettingsClassNames());
+  }
+
   private async loadSettings(): Promise<PluginSettings> {
     const loadedSettings = (await this.plugin.loadData()) as PluginSettings | null;
     if (loadedSettings !== null) {
@@ -82,6 +89,36 @@ export class PluginSettingsManager extends PluginSettingTab {
   ): Promise<void> {
     this.settings[settingKey] = value;
     await this.saveSettings();
+    this.refreshCalloutCopyButtonClassNames();
+  }
+
+  private refreshCalloutCopyButtonClassNames(): void {
+    const newClassNames = this.getCopyButtonSettingsClassNames();
+    const copyButtons = document.querySelectorAll(".callout-copy-button");
+    for (const copyButton of copyButtons) {
+      for (const [className, shouldAdd] of Object.entries(newClassNames)) {
+        if (shouldAdd) {
+          copyButton.addClass(className);
+        } else {
+          copyButton.removeClass(className);
+        }
+      }
+    }
+  }
+
+  private getCopyButtonSettingsClassNames(): Record<string, boolean> {
+    const showCopyFormatIndicators = this.getSetting("showCopyFormatIndicators");
+    const { showCopyButtonOnlyOnLineHover } = this.getSetting("sourceModeSettings");
+    const {
+      showCopyMarkdownButton: showCopyMarkdownButton,
+      showCopyPlainTextButton: showCopyPlainTextButton,
+    } = this.getSetting("readingModeSettings");
+    return {
+      "show-copy-format-indicators": showCopyFormatIndicators,
+      "show-source-mode-copy-button-only-on-line-hover": showCopyButtonOnlyOnLineHover,
+      "show-reading-mode-copy-markdown-buttons": showCopyMarkdownButton,
+      "show-reading-mode-copy-plain-text-buttons": showCopyPlainTextButton,
+    };
   }
 
   private async setSourceModeSetting<K extends keyof SourceModeSettings>(
@@ -175,24 +212,4 @@ export class PluginSettingsManager extends PluginSettingTab {
   private async saveSettings(): Promise<void> {
     await this.plugin.saveData(this.settings);
   }
-}
-
-/**
- * Returns the class names for the copy buttons based on the plugin settings.
- */
-export function getCopyButtonSettingsClassName(
-  pluginSettingsManager: PluginSettingsManager
-): string {
-  const showCopyFormatIndicators = pluginSettingsManager.getSetting("showCopyFormatIndicators");
-  const { showCopyButtonOnlyOnLineHover } = pluginSettingsManager.getSetting("sourceModeSettings");
-  const {
-    showCopyMarkdownButton: showCopyMarkdownButton,
-    showCopyPlainTextButton: showCopyPlainTextButton,
-  } = pluginSettingsManager.getSetting("readingModeSettings");
-  return classNames({
-    "show-copy-format-indicators": showCopyFormatIndicators,
-    "show-source-mode-copy-button-only-on-line-hover": showCopyButtonOnlyOnLineHover,
-    "show-reading-mode-copy-markdown-buttons": showCopyMarkdownButton,
-    "show-reading-mode-copy-plain-text-buttons": showCopyPlainTextButton,
-  });
 }

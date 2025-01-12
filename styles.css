@@ -61,6 +61,15 @@
   }
 }
 
+div[data-mode="preview"] {
+  .callout-copy-button-markdown:not(.show-reading-mode-copy-markdown-buttons) {
+    display: none;
+  }
+  .callout-copy-button-plain-text:not(.show-reading-mode-copy-plain-text-buttons) {
+    display: none;
+  }
+}
+
 .callout-action-buttons {
   position: absolute;
   /* Match the placement of the copy button on codeblocks */

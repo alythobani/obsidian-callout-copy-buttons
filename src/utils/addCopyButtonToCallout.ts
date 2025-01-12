@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { createCopyButton } from "../copyButton";
-import { getCopyButtonSettingsClassName, type PluginSettingsManager } from "../settings";
+import { type PluginSettingsManager } from "../settings";
 import { getCalloutBodyTextFromInnerText } from "./getCalloutBodyText";
 
 export function addCopyPlainTextButtonToCalloutDiv({
@@ -41,7 +41,7 @@ export function addCopyButtonToCallout({
   isCMCalloutNode: boolean;
   pluginSettingsManager: PluginSettingsManager;
 }): void {
-  const settingsClassName = getCopyButtonSettingsClassName(pluginSettingsManager);
+  const settingsClassName = pluginSettingsManager.getCopyButtonSettingsClassName();
   const copyButton = createCopyButton({
     getCalloutBodyText,
     className: classNames("callout-copy-button", buttonClassName, settingsClassName),
