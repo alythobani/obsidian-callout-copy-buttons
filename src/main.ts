@@ -1,9 +1,9 @@
 import { Plugin } from "obsidian";
 import { watchAndAddCopyButtonsToDOM } from "./DOMObserver";
-import { postProcessMarkdown } from "./markdownPostProcessor";
+import { getMarkdownPostProcessor } from "./markdownPostProcessor";
 import { PluginSettingsManager } from "./settings";
 import { removeCopyButtonsAndRestoreEditBlockButton } from "./utils/cleanupDOM";
-import { calloutCopyButtonViewPlugin } from "./viewPlugin/viewPlugin";
+import { createCalloutCopyButtonViewPlugin } from "./viewPlugin/viewPlugin";
 
 export default class CalloutCopyButtonPlugin extends Plugin {
   private calloutDivObserver: MutationObserver | null = null;
@@ -16,12 +16,15 @@ export default class CalloutCopyButtonPlugin extends Plugin {
   async onload(): Promise<void> {
     this.logInfo("Loading Callout Copy Button plugin");
 
-    await this.pluginSettingsManager.setupSettingsTab();
+    const { pluginSettingsManager } = this;
+
+    await pluginSettingsManager.setupSettingsTab();
 
     this.app.workspace.onLayoutReady(() => {
+      const calloutCopyButtonViewPlugin = createCalloutCopyButtonViewPlugin(pluginSettingsManager);
       this.registerEditorExtension([calloutCopyButtonViewPlugin]);
-      this.registerMarkdownPostProcessor(postProcessMarkdown);
-      this.calloutDivObserver = watchAndAddCopyButtonsToDOM();
+      this.registerMarkdownPostProcessor(getMarkdownPostProcessor({ pluginSettingsManager }));
+      this.calloutDivObserver = watchAndAddCopyButtonsToDOM({ pluginSettingsManager });
     });
   }
 

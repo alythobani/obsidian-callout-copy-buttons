@@ -1,13 +1,16 @@
 import classNames from "classnames";
 import { createCopyButton } from "../copyButton";
+import { getCopyButtonSettingsClassName, type PluginSettingsManager } from "../settings";
 import { getCalloutBodyTextFromInnerText } from "./getCalloutBodyText";
 
 export function addCopyPlainTextButtonToCalloutDiv({
   calloutNode,
   isCMCalloutNode,
+  pluginSettingsManager,
 }: {
   calloutNode: HTMLElement;
   isCMCalloutNode: boolean;
+  pluginSettingsManager: PluginSettingsManager;
 }): void {
   if (calloutNode.querySelector(".callout-copy-button-plain-text") !== null) {
     // Copy button already exists; not adding another one
@@ -19,6 +22,7 @@ export function addCopyPlainTextButtonToCalloutDiv({
     tooltipText: "Copy (plain text)",
     buttonClassName: "callout-copy-button-plain-text",
     isCMCalloutNode,
+    pluginSettingsManager,
   });
 }
 
@@ -28,16 +32,19 @@ export function addCopyButtonToCallout({
   tooltipText,
   buttonClassName,
   isCMCalloutNode,
+  pluginSettingsManager,
 }: {
   calloutNode: HTMLElement;
   getCalloutBodyText: () => string | null;
   tooltipText: string;
   buttonClassName?: string | undefined;
   isCMCalloutNode: boolean;
+  pluginSettingsManager: PluginSettingsManager;
 }): void {
+  const settingsClassName = getCopyButtonSettingsClassName(pluginSettingsManager);
   const copyButton = createCopyButton({
     getCalloutBodyText,
-    className: classNames("callout-copy-button", buttonClassName),
+    className: classNames("callout-copy-button", buttonClassName, settingsClassName),
     tooltipText,
   });
   const actionButtonsWrapper = getOrCreateCalloutActionButtonsWrapper({

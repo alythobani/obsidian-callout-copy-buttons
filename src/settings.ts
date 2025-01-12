@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import { type Plugin, PluginSettingTab, Setting } from "obsidian";
 
 type SourceModeSettings = {
@@ -30,7 +31,7 @@ function deepCloneSettings(settings: PluginSettings): PluginSettings {
 
 export const DEFAULT_SETTINGS: PluginSettings = {
   pluginVersion: "1.0.0",
-  showCopyFormatIndicators: true,
+  showCopyFormatIndicators: false,
   sourceModeSettings: {
     showCopyButtonOnlyOnLineHover: false,
   },
@@ -118,7 +119,7 @@ export class PluginSettingsManager extends PluginSettingTab {
     new Setting(this.containerEl)
       .setName("Show copy format indicators on copy buttons")
       .setDesc(
-        "Whether to show little 'P' (plain text) and 'M' (Markdown) indicators on the copy buttons that indicate what format the copied content will be in."
+        "Whether to add little 'P' (plain text) and 'M' (Markdown) indicators to the copy buttons that indicate what format the copied content will be in."
       )
       .addToggle((toggle) =>
         toggle
@@ -135,7 +136,7 @@ export class PluginSettingsManager extends PluginSettingTab {
   private displayShowCopyButtonOnlyOnLineHoverSetting(): void {
     new Setting(this.containerEl)
       .setName("Show copy button only on line hover")
-      .setDesc("Whether to show the copy button only when hovering over the callout's header line.")
+      .setDesc("If disabled, the copy buttons in Source Mode will always be visible.")
       .addToggle((toggle) =>
         toggle
           .setValue(this.settings.sourceModeSettings.showCopyButtonOnlyOnLineHover)
@@ -151,8 +152,8 @@ export class PluginSettingsManager extends PluginSettingTab {
 
   private displayShowCopyMarkdownButtonSetting(): void {
     new Setting(this.containerEl)
-      .setName('Show "Copy (Markdown)" button')
-      .setDesc('Whether to show the "Copy (Markdown)" button in reading mode.')
+      .setName("Show 'Copy (Markdown)' button")
+      .setDesc("Whether to add 'Copy (Markdown)' buttons to callout blocks in Reading Mode.")
       .addToggle((toggle) =>
         toggle
           .setValue(this.settings.readingModeSettings.showCopyMarkdownButton)
@@ -163,7 +164,7 @@ export class PluginSettingsManager extends PluginSettingTab {
   private displayShowCopyPlainTextButtonSetting(): void {
     new Setting(this.containerEl)
       .setName("Show 'Copy (plain text)' button")
-      .setDesc("Whether to show the 'Copy (plain text)' button in reading mode.")
+      .setDesc("Whether to add 'Copy (plain text)' buttons to callout blocks in Reading Mode.")
       .addToggle((toggle) =>
         toggle
           .setValue(this.settings.readingModeSettings.showCopyPlainTextButton)
@@ -174,4 +175,24 @@ export class PluginSettingsManager extends PluginSettingTab {
   private async saveSettings(): Promise<void> {
     await this.plugin.saveData(this.settings);
   }
+}
+
+/**
+ * Returns the class names for the copy buttons based on the plugin settings.
+ */
+export function getCopyButtonSettingsClassName(
+  pluginSettingsManager: PluginSettingsManager
+): string {
+  const showCopyFormatIndicators = pluginSettingsManager.getSetting("showCopyFormatIndicators");
+  const { showCopyButtonOnlyOnLineHover } = pluginSettingsManager.getSetting("sourceModeSettings");
+  const {
+    showCopyMarkdownButton: showCopyMarkdownButton,
+    showCopyPlainTextButton: showCopyPlainTextButton,
+  } = pluginSettingsManager.getSetting("readingModeSettings");
+  return classNames({
+    "show-copy-format-indicators": showCopyFormatIndicators,
+    "show-source-mode-copy-button-only-on-line-hover": showCopyButtonOnlyOnLineHover,
+    "show-reading-mode-copy-markdown-buttons": showCopyMarkdownButton,
+    "show-reading-mode-copy-plain-text-buttons": showCopyPlainTextButton,
+  });
 }

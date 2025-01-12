@@ -1,11 +1,26 @@
 import { type MarkdownPostProcessorContext } from "obsidian";
+import { type PluginSettingsManager } from "./settings";
 import {
   addCopyButtonToCallout,
   addCopyPlainTextButtonToCalloutDiv,
 } from "./utils/addCopyButtonToCallout";
 import { getCalloutBodyTextFromSectionInfo } from "./utils/getCalloutBodyText";
 
-export function postProcessMarkdown(el: HTMLElement, ctx: MarkdownPostProcessorContext): void {
+export function getMarkdownPostProcessor({
+  pluginSettingsManager,
+}: {
+  pluginSettingsManager: PluginSettingsManager;
+}): (el: HTMLElement, ctx: MarkdownPostProcessorContext) => void {
+  return (el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
+    postProcessMarkdown(el, ctx, pluginSettingsManager);
+  };
+}
+
+function postProcessMarkdown(
+  el: HTMLElement,
+  ctx: MarkdownPostProcessorContext,
+  pluginSettingsManager: PluginSettingsManager
+): void {
   const { topLevelCallout, isCMCalloutNode } = getTopLevelCalloutNode(el);
   if (topLevelCallout === null) {
     // Callout node not found within the rendered markdown section
@@ -15,11 +30,27 @@ export function postProcessMarkdown(el: HTMLElement, ctx: MarkdownPostProcessorC
     calloutNode: topLevelCallout,
     ctx,
     isCMCalloutNode,
+    pluginSettingsManager,
   });
-  addCopyPlainTextButtonToCalloutDiv({ calloutNode: topLevelCallout, isCMCalloutNode });
+  const { showCopyPlainTextButton: showCopyPlainTextButton } =
+    pluginSettingsManager.getSetting("readingModeSettings");
+  const isReadingMode = !isCMCalloutNode; // .cm-callout nodes are only present in Live Preview mode
+  if (isReadingMode && !showCopyPlainTextButton) {
+    // User has disabled Copy Plain Text buttons in Reading Mode; return early without adding them
+    return;
+  }
+  addCopyPlainTextButtonToCalloutDiv({
+    calloutNode: topLevelCallout,
+    isCMCalloutNode,
+    pluginSettingsManager,
+  });
   const nestedCallouts = topLevelCallout.findAll(".callout");
   nestedCallouts.forEach((nestedCallout) => {
-    addCopyPlainTextButtonToCalloutDiv({ calloutNode: nestedCallout, isCMCalloutNode: false });
+    addCopyPlainTextButtonToCalloutDiv({
+      calloutNode: nestedCallout,
+      isCMCalloutNode: false,
+      pluginSettingsManager,
+    });
   });
 }
 
@@ -42,13 +73,15 @@ function maybeAddCopyMarkdownFromSectionInfoButtonToCallout({
   calloutNode,
   ctx,
   isCMCalloutNode,
+  pluginSettingsManager,
 }: {
   calloutNode: HTMLElement;
   ctx: MarkdownPostProcessorContext;
   isCMCalloutNode: boolean;
+  pluginSettingsManager: PluginSettingsManager;
 }): void {
   if (isCMCalloutNode) {
-    // Section info not available in CodeMirror callouts; not adding copy markdown button
+    // Section info not available in Live Preview mode; not adding copy markdown button
     return;
   }
   if (calloutNode.querySelector(".callout-copy-button-markdown")) {
@@ -72,5 +105,6 @@ function maybeAddCopyMarkdownFromSectionInfoButtonToCallout({
     tooltipText: "Copy (Markdown)",
     buttonClassName: "callout-copy-button-markdown",
     isCMCalloutNode,
+    pluginSettingsManager,
   });
 }

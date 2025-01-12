@@ -1,21 +1,26 @@
+import { type PluginSettingsManager } from "./settings";
 import {
   addCopyPlainTextButtonToCalloutDiv,
   moveEditBlockButtonToCalloutActionButtonsWrapper,
 } from "./utils/addCopyButtonToCallout";
 
-export function watchAndAddCopyButtonsToDOM(): MutationObserver {
-  const observer = watchDOMForNewCallouts();
-  addAllCopyButtons();
+export function watchAndAddCopyButtonsToDOM({
+  pluginSettingsManager,
+}: {
+  pluginSettingsManager: PluginSettingsManager;
+}): MutationObserver {
+  const observer = watchDOMForNewCallouts(pluginSettingsManager);
+  addAllCopyButtons(pluginSettingsManager);
   return observer;
 }
 
-function watchDOMForNewCallouts(): MutationObserver {
-  const observer = getCalloutDivObserver();
+function watchDOMForNewCallouts(pluginSettingsManager: PluginSettingsManager): MutationObserver {
+  const observer = getCalloutDivObserver(pluginSettingsManager);
   observer.observe(document.body, { childList: true, subtree: true });
   return observer;
 }
 
-function getCalloutDivObserver(): MutationObserver {
+function getCalloutDivObserver(pluginSettingsManager: PluginSettingsManager): MutationObserver {
   return new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
       mutation.addedNodes.forEach((node) => {
@@ -24,35 +29,53 @@ function getCalloutDivObserver(): MutationObserver {
         }
         const newCMCalloutNodes = node.querySelectorAll<HTMLDivElement>(".cm-callout");
         for (const calloutNode of newCMCalloutNodes) {
-          addCopyPlainTextButtonAndMoveEditBlockButton({ calloutNode, isCMCalloutNode: true });
+          addCopyPlainTextButtonAndMoveEditBlockButton({
+            calloutNode,
+            isCMCalloutNode: true,
+            pluginSettingsManager,
+          });
         }
         const newCalloutNodes = node.querySelectorAll<HTMLDivElement>(".callout");
         for (const calloutNode of newCalloutNodes) {
-          addCopyPlainTextButtonAndMoveEditBlockButton({ calloutNode, isCMCalloutNode: false });
+          addCopyPlainTextButtonAndMoveEditBlockButton({
+            calloutNode,
+            isCMCalloutNode: false,
+            pluginSettingsManager,
+          });
         }
       });
     });
   });
 }
 
-function addAllCopyButtons(): void {
+function addAllCopyButtons(pluginSettingsManager: PluginSettingsManager): void {
   const cmCalloutNodes = document.querySelectorAll<HTMLElement>(".cm-callout");
   cmCalloutNodes.forEach((calloutNode) =>
-    addCopyPlainTextButtonAndMoveEditBlockButton({ calloutNode, isCMCalloutNode: true })
+    addCopyPlainTextButtonAndMoveEditBlockButton({
+      calloutNode,
+      isCMCalloutNode: true,
+      pluginSettingsManager,
+    })
   );
   const calloutNodes = document.querySelectorAll<HTMLElement>(".callout");
   calloutNodes.forEach((calloutNode) =>
-    addCopyPlainTextButtonAndMoveEditBlockButton({ calloutNode, isCMCalloutNode: false })
+    addCopyPlainTextButtonAndMoveEditBlockButton({
+      calloutNode,
+      isCMCalloutNode: false,
+      pluginSettingsManager,
+    })
   );
 }
 
 function addCopyPlainTextButtonAndMoveEditBlockButton({
   calloutNode,
   isCMCalloutNode,
+  pluginSettingsManager,
 }: {
   calloutNode: HTMLElement;
   isCMCalloutNode: boolean;
+  pluginSettingsManager: PluginSettingsManager;
 }): void {
-  addCopyPlainTextButtonToCalloutDiv({ calloutNode, isCMCalloutNode });
+  addCopyPlainTextButtonToCalloutDiv({ calloutNode, isCMCalloutNode, pluginSettingsManager });
   moveEditBlockButtonToCalloutActionButtonsWrapper(calloutNode);
 }

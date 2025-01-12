@@ -33,6 +33,10 @@
     }
   }
 
+  &:not(.show-copy-format-indicators)::after {
+    display: none;
+  }
+
   &.callout-copy-button-plain-text::after,
   &.callout-copy-button-markdown::after {
     font-size: 0.65em;
@@ -72,7 +76,9 @@
 
 .callout-copy-button-widget {
   position: absolute;
-  opacity: 1;
   top: 0px;
   inset-inline-end: 0px;
+  &:not(.show-source-mode-copy-button-only-on-line-hover) {
+    opacity: 1;
+  }
 }
