@@ -61,7 +61,7 @@ async function onCopyButtonClick({
 
   await navigator.clipboard.writeText(calloutBodyText);
 
-  console.log(`Copied: ${JSON.stringify(calloutBodyText)}`);
+  // console.log(`Copied: ${JSON.stringify(calloutBodyText)}`);
   copyButton.innerHTML = copyButtonCheckmarkIconSVGText;
   copyButton.classList.add("just-copied");
   copyButton.setAttribute("disabled", "true");

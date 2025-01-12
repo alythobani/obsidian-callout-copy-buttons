@@ -5,9 +5,7 @@
 export function removeCopyButtonsAndRestoreEditBlockButton(): void {
   document.querySelectorAll(".callout-action-buttons").forEach((wrapper) => {
     const editBlockButton = wrapper.querySelector(".edit-block-button");
-    console.log("Moving edit block button out of wrapper");
     moveEditBlockButtonOutOfWrapper(editBlockButton);
-    console.log("Removing callout action buttons wrapper");
     wrapper.remove();
   });
   document.querySelectorAll(".callout-copy-button").forEach((button) => {

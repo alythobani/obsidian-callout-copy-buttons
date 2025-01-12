@@ -63,7 +63,6 @@ export class PluginSettingsManager extends PluginSettingTab {
   private async loadSettings(): Promise<PluginSettings> {
     const loadedSettings = (await this.plugin.loadData()) as PluginSettings | null;
     if (loadedSettings !== null) {
-      console.log("Loaded settings:", loadedSettings);
       return loadedSettings;
     }
     return await this.initializeSettings();

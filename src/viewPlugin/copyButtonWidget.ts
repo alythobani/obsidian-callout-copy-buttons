@@ -28,7 +28,7 @@ export class CopyButtonWidget extends WidgetType {
       navigator.clipboard
         .writeText(this.text)
         .then(() => {
-          console.log(`Copied: ${JSON.stringify(this.text)}`);
+          // console.log(`Copied: ${JSON.stringify(this.text)}`);
           copyButton.innerHTML = copyButtonCheckmarkIconSVGText;
           copyButton.addClass("just-copied");
           copyButton.setAttribute("disabled", "true");
