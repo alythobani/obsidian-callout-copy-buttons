@@ -1,16 +1,6 @@
 import classNames from "classnames";
-import { Notice } from "obsidian";
+import { Notice, setIcon } from "obsidian";
 import { addClassNames } from "./utils/addClassNames";
-
-export const copyButtonSVGText = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon lucide-copy">
-<rect x="8" y="8" width="14" height="14" rx="2" ry="2"></rect>
-<path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
-</svg>`;
-
-export const copyButtonCheckmarkIconSVGText = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon lucide-check">
-<path d="M20 6 9 17l-5-5">
-</path>
-</svg>`;
 
 export function createCopyButton({
   getCalloutBodyText,
@@ -25,7 +15,7 @@ export function createCopyButton({
 
   addClassNames({ el: copyButton, classNames: classNames("callout-copy-button", className) });
   copyButton.setAttribute("aria-label", tooltipText);
-  copyButton.innerHTML = copyButtonSVGText;
+  setIcon(copyButton, "copy");
 
   // Using `mousedown` lets us prevent the default behavior of the `click` event (e.g. taking focus
   // which changes cursor/selection position in the editor)
@@ -62,12 +52,12 @@ async function onCopyButtonClick({
   await navigator.clipboard.writeText(calloutBodyText);
 
   // console.log(`Copied: ${JSON.stringify(calloutBodyText)}`);
-  copyButton.innerHTML = copyButtonCheckmarkIconSVGText;
+  setIcon(copyButton, "check");
   copyButton.classList.add("just-copied");
   copyButton.setAttribute("disabled", "true");
 
   setTimeout(() => {
-    copyButton.innerHTML = copyButtonSVGText;
+    setIcon(copyButton, "copy");
     copyButton.classList.remove("just-copied");
     copyButton.removeAttribute("disabled");
   }, 3000);

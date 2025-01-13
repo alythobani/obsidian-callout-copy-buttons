@@ -1,6 +1,6 @@
 import { WidgetType } from "@codemirror/view";
 import classNames from "classnames";
-import { copyButtonCheckmarkIconSVGText, copyButtonSVGText } from "../copyButton";
+import { setIcon } from "obsidian";
 import { type PluginSettingsManager } from "../settings";
 import { addClassNames } from "../utils/addClassNames";
 
@@ -20,7 +20,7 @@ export class CopyButtonWidget extends WidgetType {
     addClassNames({ el: copyButton, classNames: className });
     copyButton.setAttribute("aria-label", "Copy (Markdown)");
 
-    copyButton.innerHTML = copyButtonSVGText;
+    setIcon(copyButton, "copy");
 
     copyButton.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -29,11 +29,11 @@ export class CopyButtonWidget extends WidgetType {
         .writeText(this.text)
         .then(() => {
           // console.log(`Copied: ${JSON.stringify(this.text)}`);
-          copyButton.innerHTML = copyButtonCheckmarkIconSVGText;
+          setIcon(copyButton, "check");
           copyButton.addClass("just-copied");
           copyButton.setAttribute("disabled", "true");
           setTimeout(() => {
-            copyButton.innerHTML = copyButtonSVGText;
+            setIcon(copyButton, "copy");
             copyButton.removeClass("just-copied");
             copyButton.removeAttribute("disabled");
           }, 3000);
