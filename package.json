@@ -5,7 +5,7 @@
   "main": "./main.js",
   "author": "Aly Thobani",
   "license": "GPL-3.0-only",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
     "build": "npx webpack",
     "watch": "npx webpack --watch",
