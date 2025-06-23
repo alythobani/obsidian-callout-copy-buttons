@@ -3,8 +3,19 @@ import { type MarkdownSectionInformation } from "obsidian";
 
 const CALLOUT_HEADER_WITH_INDENT_CAPTURE_REGEX = /^((?:> )+)\[!.+\]/;
 
-export function getCalloutBodyTextFromInnerText(calloutNode: HTMLElement): string {
-  return calloutNode.innerText.split("\n").slice(1).join("\n").trim();
+/**
+ * Gets the body content of the given callout node, in plain text format, from the `innerText` HTML
+ * attribute of the node's `.callout-content` child div if found, else the callout node itself (in
+ * which case we strip off the first line which corresponds to the callout header).
+ *
+ * Trims any leading/trailing whitespace before returning.
+ */
+export function getCalloutBodyPlainText(calloutNode: HTMLElement): string {
+  const maybeBodyFromCalloutContentDiv =
+    calloutNode.querySelector<HTMLDivElement>("div.callout-content")?.innerText;
+  const calloutBodyContent =
+    maybeBodyFromCalloutContentDiv ?? calloutNode.innerText.split("\n").slice(1).join("\n");
+  return calloutBodyContent.replace(/\n\n\n+/g, "\n\n").trim();
 }
 
 /**
