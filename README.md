@@ -41,6 +41,9 @@ Educating the mind without educating the heart is no education at all.
 It is the mark of an educated mind to be able to entertain a thought without accepting it.
 ```
 
+> [!NOTE]
+> Under the hood, this uses the `innerText` HTML attribute, which may lead to slight inconsistencies in the copied content depending on whether a callout is folded or expanded; particularly in terms of whitespace.
+
 ## Contributing & Feedback
 
 My capacity may be limited for this plugin, but feel free to [open an issue](https://github.com/alythobani/obsidian-callout-copy-buttons/issues) for any bug reports or feature requests and I'll take a look if I do have time. Also feel free to submit a pull request or fork the project.
