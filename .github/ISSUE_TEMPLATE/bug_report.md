@@ -16,15 +16,14 @@ A clear and concise description of the issue.
 
 ### System Information
 
-- **VSCode version:** [e.g., 1.78.0]
-- **OS:** [e.g., Windows 10 / macOS 14 / Ubuntu 22.04]
-- **Region Helper version:** [e.g., 1.1.0]
+- **Obsidian version:** [e.g., 1.8.10]
+- **OS:** [e.g., Windows 10 / MacOS 15.5 / Ubuntu 22.04]
+- **Callout Copy Buttons version:** [e.g., 1.0.2]
 
 ### Steps to reproduce
 
-1. Open VSCode
-2. Perform [action that triggers the bug]
-3. See [unexpected behavior]
+1. Open Obsidian
+2. ...
 
 ### Expected behavior
 
@@ -32,11 +31,11 @@ A clear description of what should happen instead.
 
 ### Screenshots or recordings (optional, but helpful)
 
-If applicable, add screenshots or GIFs.
+If applicable, add screenshots or GIFs/videos.
 
 ### Error logs (if any)
 
-- Open the **VSCode Developer Console** (`Help > Toggle Developer Tools > Console`).
+- Open the **Obsidian Developer Console** (`View > Toggle Developer Tools`).
 - Copy and paste any **related error messages** here with any potentially relevant context you see.
 
 ### Additional context (optional)
