@@ -17,7 +17,7 @@ A clear and concise description of the problem.
 ### Describe the solution you'd like
 
 A clear and concise description of what you want to happen.
-(e.g., "It would be great if the extension could...")
+(e.g., "It would be great if the plugin could...")
 
 ### Describe alternatives you've considered
 
