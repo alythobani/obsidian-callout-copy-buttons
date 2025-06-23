@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { createCopyButton } from "../copyButton";
 import { type PluginSettingsManager } from "../settings";
-import { getCalloutBodyTextFromInnerText } from "./getCalloutBodyText";
+import { getCalloutBodyPlainText } from "./getCalloutBodyText";
 
 export function addCopyPlainTextButtonToCalloutDiv({
   calloutNode,
@@ -18,7 +18,7 @@ export function addCopyPlainTextButtonToCalloutDiv({
   }
   addCopyButtonToCallout({
     calloutNode,
-    getCalloutBodyText: () => getCalloutBodyTextFromInnerText(calloutNode),
+    getCalloutBodyText: () => getCalloutBodyPlainText(calloutNode),
     tooltipText: "Copy (plain text)",
     buttonClassName: "callout-copy-button-plain-text",
     isCMCalloutNode,

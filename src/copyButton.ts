@@ -49,6 +49,11 @@ async function onCopyButtonClick({
     return;
   }
 
+  if (calloutBodyText === "") {
+    new Notice("Callout Copy Buttons: Nothing to copy");
+    return;
+  }
+
   await navigator.clipboard.writeText(calloutBodyText);
 
   // console.log(`Copied: ${JSON.stringify(calloutBodyText)}`);
